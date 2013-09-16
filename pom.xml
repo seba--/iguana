@@ -16,6 +16,7 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>bin</outputDirectory>
+
                 <plugins>
                   <plugin>
                     <groupId>com.mysema.scalagen</groupId>
