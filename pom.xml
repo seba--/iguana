@@ -16,6 +16,13 @@
 	<build>
 		<sourceDirectory>src</sourceDirectory>
 		<outputDirectory>bin</outputDirectory>
+                <plugins>
+                  <plugin>
+                    <groupId>com.mysema.scalagen</groupId>
+                    <artifactId>scalagen-maven-plugin</artifactId>
+                    <version>0.3.0</version>
+                  </plugin>
+                </plugins>
 	</build>
-	
+
 </project>
