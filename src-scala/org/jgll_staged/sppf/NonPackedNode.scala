@@ -95,7 +95,7 @@ abstract class NonPackedNode(protected val slot: GrammarSlot, protected val left
   override def getRightExtent(): Int = rightExtent
 
   override def toString(): String = {
-    String.format("(%s, %d, %d)", getLabel, leftExtent, rightExtent)
+    "(%s, %d, %d)".format(getLabel, leftExtent, rightExtent)
   }
 
   override def getLabel(): String = slot.toString
@@ -137,7 +137,8 @@ abstract class NonPackedNode(protected val slot: GrammarSlot, protected val left
     children.remove(node)
     if (index >= 0) {
       for (child <- node.getChildren) {
-        children.add(index += 1, child)
+        children.add(index, child)
+        index += 1
       }
     }
   }

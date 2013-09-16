@@ -2,7 +2,7 @@ package org.jgll_staged.grammar.slot
 
 import java.io.IOException
 import java.io.Writer
-import org.jgll_staged.grammar.java.lang.Character
+import org.jgll_staged.grammar.Character
 import org.jgll_staged.grammar.Keyword
 import org.jgll_staged.grammar.Symbol
 import org.jgll_staged.grammar.Terminal
@@ -32,7 +32,7 @@ class KeywordGrammarSlot(position: Int,
     slot
   }
 
-  override def testFirstSet(index: Int, input: Input): Boolean = input.`match`(index, keyword.getChars)
+  override def testFirstSet(index: Int, input: Input): Boolean = input.`match`(index, keyword.chars)
 
   override def testFollowSet(index: Int, input: Input): Boolean = false
 
@@ -42,7 +42,7 @@ class KeywordGrammarSlot(position: Int,
   override def getSymbol(): Symbol = keyword
 
   def getFirstTerminal(): Terminal = {
-    new java.lang.Character(keyword.getChars()(0))
+    new Character(keyword.chars(0))
   }
 
   def getKeyword(): Keyword = keyword
@@ -54,7 +54,7 @@ class KeywordGrammarSlot(position: Int,
 
   override def parse(parser: GLLParserInternals, input: Input): GrammarSlot = {
     val ci = parser.getCurrentInputIndex
-    if (input.`match`(ci, keyword.getChars)) {
+    if (input.`match`(ci, keyword.chars)) {
       if (executePreConditions(parser, input)) {
         return null
       }
@@ -80,13 +80,12 @@ class KeywordGrammarSlot(position: Int,
   }
 
   private def checkPopActions(parser: GLLParserInternals, input: Input): Boolean = {
-    next.popActions.find(_.execute(parser, input)).map(true)
-      .getOrElse(false)
+    next.popActions.find(_.execute(parser, input)).isDefined
   }
 
   override def recognize(recognizer: GLLRecognizer, input: Input): GrammarSlot = {
     val ci = recognizer.getCi
-    if (!input.`match`(ci, keyword.getChars)) {
+    if (!input.`match`(ci, keyword.chars)) {
       return null
     }
     recognizer.update(recognizer.getCu, ci + keyword.size)

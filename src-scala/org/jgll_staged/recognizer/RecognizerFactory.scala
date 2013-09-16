@@ -5,16 +5,16 @@ import scala.collection.JavaConversions._
 
 object RecognizerFactory {
 
-  private var contextFreeRecognizer: GLLRecognizer = _
+  private var _contextFreeRecognizer: GLLRecognizer = _
 
   private var prefixRecognizer: GLLRecognizer = _
 
   def contextFreeRecognizer(): GLLRecognizer = {
-    if (contextFreeRecognizer == null) {
-      contextFreeRecognizer = new InterpretedGLLRecognizer()
-      return contextFreeRecognizer
+    if (_contextFreeRecognizer == null) {
+      _contextFreeRecognizer = new InterpretedGLLRecognizer()
+      return _contextFreeRecognizer
     }
-    contextFreeRecognizer
+    _contextFreeRecognizer
   }
 
   def prefixContextFreeRecognizer(): GLLRecognizer = {

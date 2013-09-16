@@ -13,7 +13,7 @@ import scala.collection.JavaConversions._
 
 object NotPrecedeActions {
 
-  private val log = LoggerWrapper.getLogger(classOf[NotPrecedeActions])
+  private val log = LoggerWrapper.getLogger(NotPrecedeActions.getClass)
 
   def fromTerminalList(slot: BodyGrammarSlot, terminals: List[Terminal]) {
     log.debug("Precede restriction added %s <<! %s", terminals, slot)
@@ -26,7 +26,7 @@ object NotPrecedeActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         val ci = parser.getCurrentInputIndex
         if (ci == 0) {
           return false
@@ -42,12 +42,12 @@ object NotPrecedeActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         val ci = parser.getCurrentInputIndex
         if (ci == 0) {
           return false
         }
-        for (keyword <- list if input.matchBackward(ci, keyword.getChars)) {
+        for (keyword <- list if input.matchBackward(ci, keyword.chars)) {
           return true
         }
         false

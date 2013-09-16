@@ -53,7 +53,7 @@ class PackedNode(private val slot: GrammarSlot, @BeanProperty val pivot: Int, @B
     extends SPPFNode {
 
   @BeanProperty
-  val children = new ArrayList(2)
+  val children = new ArrayList[SPPFNode](2)
 
   if (slot == null) {
     throw new IllegalArgumentException("Gramar slot cannot be null.")
@@ -93,7 +93,8 @@ class PackedNode(private val slot: GrammarSlot, @BeanProperty val pivot: Int, @B
     children.remove(node)
     if (index >= 0) {
       for (child <- node.getChildren) {
-        children.add(index += 1, child)
+        children.add(index, child)
+        index += 1
       }
     }
   }
@@ -103,7 +104,7 @@ class PackedNode(private val slot: GrammarSlot, @BeanProperty val pivot: Int, @B
   }
 
   override def toString(): String = {
-    String.format("(%s, %d)", getLabel, getPivot)
+    "(%s, %d)" format(getLabel, getPivot)
   }
 
   override def getLabel(): String = slot.toString

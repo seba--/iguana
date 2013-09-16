@@ -20,7 +20,7 @@ abstract class BodyGrammarSlot(protected val position: Int, protected var _previ
 
   protected var preConditions: List[SlotAction[Boolean]] = new ArrayList()
 
-  protected var popActions: List[SlotAction[Boolean]] = new ArrayList()
+  var popActions: List[SlotAction[Boolean]] = new ArrayList()
 
   private var label: String = _
 

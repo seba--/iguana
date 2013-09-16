@@ -21,7 +21,7 @@ import scala.collection.JavaConversions._
 @SerialVersionUID(1L)
 class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializable {
 
-  private val symbols = new ArrayList()
+  private val symbols = new ArrayList[BodyGrammarSlot]()
 
   @BeanProperty
   var condition: BodyGrammarSlot = _
@@ -136,7 +136,7 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
   }
 
   def `match`(set: Set[List[Symbol]]): Boolean = {
-    set.find(`match`(_)).map(true).getOrElse(false)
+    set.find(`match`(_)).isDefined
   }
 
   override def hashCode(): Int = {

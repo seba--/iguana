@@ -19,9 +19,9 @@ object AbstractGLLRecognizer {
 
   private val log = LoggerWrapper.getLogger(classOf[AbstractGLLRecognizer])
 
-  protected val startSlot = new StartSlot("Start")
+  val startSlot = new StartSlot("Start")
 
-  protected val u0 = GSSNode.U0
+  val u0 = GSSNode.U0
 }
 
 abstract class AbstractGLLRecognizer extends GLLRecognizer {

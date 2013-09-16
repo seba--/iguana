@@ -5,7 +5,7 @@ import scala.collection.JavaConversions._
 
 class SuperFastHash extends HashFunction {
 
-  private val seed = 5
+  private var seed = 5
 
   def this(seed: Int) {
     this()
@@ -107,5 +107,5 @@ class SuperFastHash extends HashFunction {
     hash
   }
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 }

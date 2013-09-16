@@ -11,7 +11,6 @@ import scala.collection.JavaConversions._
 
 object Group {
 
-  @SafeVarargs
   def of[T <: Symbol](symbols: T*): Group = new Group(Arrays.asList(symbols:_*))
 }
 

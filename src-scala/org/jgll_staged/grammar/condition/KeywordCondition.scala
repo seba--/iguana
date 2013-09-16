@@ -1,7 +1,6 @@
 package org.jgll_staged.grammar.condition
 
 import java.util.ArrayList
-import java.util.List
 import org.jgll_staged.grammar.Keyword
 import org.jgll_staged.util.CollectionsUtil._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
@@ -11,7 +10,7 @@ import org.jgll_staged.grammar.condition.ConditionType.ConditionType
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class KeywordCondition(`type`: ConditionType, @BeanProperty keywords: List[Keyword]) extends Condition(`type`) {
+class KeywordCondition(`type`: ConditionType, @BeanProperty val keywords: List[Keyword]) extends Condition(`type`) {
 
 
   def this(`type`: ConditionType, keyword: Keyword) {

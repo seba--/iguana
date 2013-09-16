@@ -5,11 +5,11 @@ import scala.collection.JavaConversions._
 
 object TerminalFactory {
 
-  def from(c: Int): Terminal = new java.lang.Character(c)
+  def from(c: Int): Terminal = new Character(c)
 
   def get(start: Int, end: Int): Terminal = {
     if (start == end) {
-      return new java.lang.Character(start)
+      return new Character(start)
     }
     new Range(start, end)
   }

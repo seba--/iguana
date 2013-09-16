@@ -19,7 +19,7 @@ object NotFollowActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         val recognizer = RecognizerFactory.prefixContextFreeRecognizer()
         recognizer.recognize(input, parser.getCurrentInputIndex, input.size, firstSlot)
       }
@@ -31,10 +31,8 @@ object NotFollowActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
-        list.find(input.`match`(parser.getCurrentInputIndex, _.getChars))
-          .map(true)
-          .getOrElse(false)
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
+        list.find(x => input.`match`(parser.getCurrentInputIndex, x.chars)).isDefined
       }
     })
   }
@@ -49,7 +47,7 @@ object NotFollowActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         set.get(input.charAt(parser.getCurrentInputIndex))
       }
     })

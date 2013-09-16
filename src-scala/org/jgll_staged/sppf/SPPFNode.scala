@@ -14,7 +14,7 @@ abstract class SPPFNode extends Level {
   var visited: Boolean = _
 
   @BeanProperty
-  var `object`: AnyRef = _
+  var obj: AnyRef = _
 
   def getLabel(): String
 

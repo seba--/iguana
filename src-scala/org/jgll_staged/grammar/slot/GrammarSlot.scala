@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 @SerialVersionUID(1L)
 abstract class GrammarSlot extends Serializable {
 
-  protected var id: Int = _
+  var id: Int = _
 
   def codeParser(writer: Writer): Unit
 

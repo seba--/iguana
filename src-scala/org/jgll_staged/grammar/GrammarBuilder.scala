@@ -48,7 +48,7 @@ object GrammarBuilder {
 
   def fromKeyword(keyword: Keyword): Rule = {
     val builder = new Rule.Builder(new Nonterminal(keyword.getName))
-    for (i <- keyword.getChars) {
+    for (i <- keyword.chars) {
       builder.addSymbol(new Character(i))
     }
     builder.build()
@@ -202,7 +202,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     case NOT_FOLLOW => if (condition.isInstanceOf[TerminalCondition]) {
       NotFollowActions.fromTerminalList(slot.next(), condition.asInstanceOf[TerminalCondition].getTerminals)
     } else if (condition.isInstanceOf[KeywordCondition]) {
-      NotFollowActions.fromKeywordList(slot.next(), condition.asInstanceOf[KeywordCondition].getKeywords)
+      NotFollowActions.fromKeywordList(slot.next(), condition.asInstanceOf[KeywordCondition].keywords)
     } else {
       NotFollowActions.fromGrammarSlot(slot.next(), convertCondition(condition.asInstanceOf[ContextFreeCondition]))
     }
@@ -210,8 +210,8 @@ class GrammarBuilder(var name: String) extends Serializable {
     case NOT_PRECEDE => 
       assert(!(condition.isInstanceOf[ContextFreeCondition]))
       if (condition.isInstanceOf[KeywordCondition]) {
-        val literalCondition = condition.asInstanceOf[KeywordCondition]
-        NotPrecedeActions.fromKeywordList(slot, literalCondition.getKeywords)
+        val literalCondition: KeywordCondition = condition.asInstanceOf[KeywordCondition]
+        NotPrecedeActions.fromKeywordList(slot, literalCondition.keywords)
       } else {
         val terminalCondition = condition.asInstanceOf[TerminalCondition]
         NotPrecedeActions.fromTerminalList(slot, terminalCondition.getTerminals)
@@ -502,14 +502,14 @@ class GrammarBuilder(var name: String) extends Serializable {
   }
 
   def rewriteExceptPatterns() {
-    rewriteExceptPatterns(groupPatterns(exceptPatterns))
+    rewriteExceptPatterns(doGroupPatterns(exceptPatterns))
   }
 
   def rewritePrecedencePatterns() {
     for ((key, value) <- precednecePatternsMap) {
       log.debug("Applying the pattern %s with %d.", key, value.size)
       val nonterminal = nonterminalsMap.get(key)
-      val groupPatterns = groupPatterns(value)
+      val groupPatterns = doGroupPatterns(value)
       rewriteFirstLevel(nonterminal, groupPatterns)
       rewriteDeeperLevels(nonterminal, groupPatterns)
     }
@@ -527,7 +527,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
   }
 
-  private def groupPatterns[T <: AbstractPattern](patterns: java.lang.Iterable[T]): Map[T, Set[List[Symbol]]] = {
+  private def doGroupPatterns[T <: AbstractPattern](patterns: java.lang.Iterable[T]): Map[T, Set[List[Symbol]]] = {
     val group = new LinkedHashMap[T, Set[List[Symbol]]]()
     for (pattern <- patterns) {
       var set = group.get(pattern)
@@ -584,7 +584,7 @@ class GrammarBuilder(var name: String) extends Serializable {
       val pattern = key
       val freshNontermianl = value
       val alternates = head.without(patterns.get(pattern))
-      val copyAlternates = copyAlternates(freshNontermianl, alternates)
+      val copyAlternates = doCopyAlternates(freshNontermianl, alternates)
       freshNontermianl.setAlternates(copyAlternates)
       existingAlternates.put(new HashSet(copyAlternates), freshNontermianl)
     }
@@ -621,7 +621,7 @@ class GrammarBuilder(var name: String) extends Serializable {
       newNonterminal = new HeadGrammarSlot(filteredNonterminal.getNonterminal)
       addNewNonterminal(newNonterminal)
       alt.setNonterminalAt(position, newNonterminal)
-      val copy = copyAlternates(newNonterminal, filteredNonterminal.without(filteredAlternates))
+      val copy = doCopyAlternates(newNonterminal, filteredNonterminal.without(filteredAlternates))
       existingAlternates.put(new HashSet(copy), newNonterminal)
       newNonterminal.setAlternates(copy)
     } else {
@@ -738,7 +738,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     copy = new HeadGrammarSlot(head.getNonterminal)
     addNewNonterminal(copy)
     map.put(head, copy)
-    val copyAlternates = copyAlternates(copy, head.getAlternates)
+    val copyAlternates = doCopyAlternates(copy, head.getAlternates)
     copy.setAlternates(copyAlternates)
     for (alt <- copyAlternates if alt.getSlotAt(0).isInstanceOf[NonterminalGrammarSlot]) {
       val nonterminal = alt.getSlotAt(0).asInstanceOf[NonterminalGrammarSlot]

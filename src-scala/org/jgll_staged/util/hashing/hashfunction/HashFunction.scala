@@ -23,5 +23,5 @@ trait HashFunction extends Serializable {
       k4: Int, 
       k5: Int): Int
 
-  def hash(keys: Int*): Int
+  def hash(keys: Array[Int]): Int
 }

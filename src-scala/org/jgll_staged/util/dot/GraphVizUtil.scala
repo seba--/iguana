@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 
 object GraphVizUtil {
 
-  private val log = LoggerWrapper.getLogger(classOf[GraphVizUtil])
+  private val log = LoggerWrapper.getLogger(GraphVizUtil.getClass)
 
   val SYMBOL_NODE = "[shape=box, style=rounded, height=0.1, width=0.1, color=black, fontcolor=black, label=\"%s\", fontsize=10];"
 

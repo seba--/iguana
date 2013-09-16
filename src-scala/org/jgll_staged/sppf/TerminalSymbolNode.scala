@@ -51,7 +51,7 @@ class TerminalSymbolNode(@BeanProperty val matchedChar: Int, private val inputIn
   }
 
   override def toString(): String = {
-    String.format("(%s, %d, %d)", getLabel, inputIndex, getRightExtent)
+    "(%s, %d, %d)".format(getLabel, inputIndex, getRightExtent)
   }
 
   override def getLeftExtent(): Int = inputIndex

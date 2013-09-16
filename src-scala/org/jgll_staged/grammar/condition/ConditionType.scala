@@ -4,27 +4,23 @@ package org.jgll_staged.grammar.condition
 import scala.collection.JavaConversions._
 
 object ConditionType extends Enumeration {
+  type ConditionType = Value
 
-  val FOLLOW = new ConditionType(" >> ")
+  val FOLLOW = Value(" >> ")
 
-  val NOT_FOLLOW = new ConditionType(" !>> ")
+  val NOT_FOLLOW = Value(" !>> ")
 
-  val PRECEDE = new ConditionType(" << ")
+  val PRECEDE = Value(" << ")
 
-  val NOT_PRECEDE = new ConditionType(" !<< ")
+  val NOT_PRECEDE = Value(" !<< ")
 
-  val MATCH = new ConditionType(" & ")
+  val MATCH = Value(" & ")
 
-  val NOT_MATCH = new ConditionType(" \\ ")
+  val NOT_MATCH = Value(" \\ ")
 
-  val END_OF_LINE = new ConditionType("$")
+  val END_OF_LINE = Value("$")
 
-  val START_OF_LINE = new ConditionType("^")
-
-  class ConditionType private (private var symbol: String) extends Val {
-
-    override def toString(): String = symbol
-  }
+  val START_OF_LINE = Value("^")
 
   implicit def convertValue(v: Value): ConditionType = v.asInstanceOf[ConditionType]
 }

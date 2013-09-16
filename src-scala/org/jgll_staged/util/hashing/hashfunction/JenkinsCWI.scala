@@ -6,7 +6,10 @@ import scala.collection.JavaConversions._
 
 object JenkinsCWI {
 
-  private def mix(a: Int, b: Int, c: Int): Int = {
+  private def mix(_a: Int, _b: Int, _c: Int): Int = {
+    var a = _a
+    var b = _b
+    var c = _c
     a -= b
     a -= c
     a ^= (c >> 13)
@@ -52,10 +55,9 @@ class JenkinsCWI extends HashFunction {
   override def hash(k1: Int, k2: Int): Int = 0
 
   override def hash(k1: Int, k2: Int, k3: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = 0x9e3779b9
+    var a: Int = 0x9e3779b9
+    var b: Int = a
+    var c: Int = a
     c = seed
     a += k1
     b += k2
@@ -94,10 +96,9 @@ class JenkinsCWI extends HashFunction {
       k2: Int, 
       k3: Int, 
       k4: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = 0x9e3779b9
+    var a: Int = 0x9e3779b9
+    var b: Int = a
+    var c: Int = a
     c = seed
     a += k1
     b += k2
@@ -138,10 +139,9 @@ class JenkinsCWI extends HashFunction {
       k3: Int, 
       k4: Int, 
       k5: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = 0x9e3779b9
+    var a: Int = 0x9e3779b9
+    var b: Int = a
+    var c: Int = a
     c = seed
     a += k1
     b += k2
@@ -178,5 +178,5 @@ class JenkinsCWI extends HashFunction {
     mix(a, b, c)
   }
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 }

@@ -3,14 +3,7 @@ package org.jgll_staged.util.hashing.hashfunction
 //remove if not needed
 import scala.collection.JavaConversions._
 
-class SuperFastHash16BitOnly extends HashFunction {
-
-  private val seed = 5
-
-  def this(seed: Int) {
-    this()
-    this.seed = seed
-  }
+class SuperFastHash16BitOnly(private val seed: Int = 5) extends HashFunction {
 
   override def hash(k: Int): Int = 0
 
@@ -83,5 +76,5 @@ class SuperFastHash16BitOnly extends HashFunction {
     hash
   }
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 }

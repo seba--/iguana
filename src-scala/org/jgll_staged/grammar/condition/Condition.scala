@@ -1,6 +1,8 @@
 package org.jgll_staged.grammar.condition
 
 import java.io.Serializable
+import org.jgll_staged.grammar.condition.ConditionType._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 

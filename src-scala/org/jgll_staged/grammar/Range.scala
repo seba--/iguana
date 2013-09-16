@@ -48,7 +48,7 @@ class Range(@BeanProperty val start: Int, @BeanProperty val end: Int) extends Ab
 
   override def asBitSet(): BitSet = testSet
 
-  override def addConditions(conditions: Collection[Condition]): Terminal = {
+  override def addConditions(conditions: Seq[Condition]): Terminal = {
     val range = new Range(this.start, this.end)
     range.conditions.addAll(this.conditions)
     range.conditions.addAll(conditions)

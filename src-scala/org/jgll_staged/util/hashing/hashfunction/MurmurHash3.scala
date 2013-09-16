@@ -14,14 +14,16 @@ object MurmurHash3 {
 
   private val N = 0xe6546b64
 
-  private def mixK(k: Int): Int = {
+  private def mixK(_k: Int): Int = {
+    var k = _k
     k *= C1
     k = java.lang.Integer.rotateLeft(k, 15)
     k = k * C2
     k
   }
 
-  private def mixH(h: Int, k: Int): Int = {
+  private def mixH(_h: Int, k: Int): Int = {
+    var h = _h
     h ^= k
     h = java.lang.Integer.rotateLeft(h, 13)
     h = h * M + N
@@ -36,7 +38,7 @@ class MurmurHash3(private var seed: Int) extends HashFunction {
     this(0)
   }
 
-  override def hash(keys: Int*): Int = {
+  override def hash(keys: Array[Int]): Int = {
     var h = seed
     var k = 0
     for (i <- 0 until keys.length) {

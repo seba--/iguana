@@ -47,8 +47,7 @@ class ParseError(@BeanProperty val slot: GrammarSlot,
     if (node == GSSNode.U0) {
       return
     }
-    out.println(String.format("%" + i * 2 + "s, %d", node.getGrammarSlot.asInstanceOf[BodyGrammarSlot].previous()
-      .toString, node.getInputIndex))
+    out.println("%" + i * 2 + "s, %d".format(node.getGrammarSlot.asInstanceOf[BodyGrammarSlot].previous().toString, node.getInputIndex))
   }
 
   private def findMergePoint(node: GSSNode, out: PrintStream, i: Int): GSSNode = {
@@ -58,7 +57,8 @@ class ParseError(@BeanProperty val slot: GrammarSlot,
     reachableFrom(node, out, i)
   }
 
-  private def reachableFrom(node: GSSNode, out: PrintStream, i: Int): GSSNode = {
+  private def reachableFrom(node: GSSNode, out: PrintStream, _i: Int): GSSNode = {
+    var i = _i
     val set = new HashSet[GSSNode]()
     val frontier = new ArrayDeque[GSSNode]()
     for (edge <- node.getEdges) {

@@ -36,14 +36,15 @@ class ToJavaCode(private var grammar: Grammar) extends SPPFVisitor {
         ", " + 
         node.getLeftExtent + 
         ");\n")
-      node.setObject("node" + count += 1)
+      node.setObj("node" + count)
+      count += 1
     }
   }
 
   override def visit(node: NonterminalSymbolNode) {
     if (!node.isVisited) {
       node.setVisited(true)
-      node.setObject("node" + count)
+      node.setObj("node" + count)
       if (grammar.isNewNonterminal(node.getGrammarSlot.asInstanceOf[HeadGrammarSlot])) {
         val index = grammar.getIndex(node.getGrammarSlot.asInstanceOf[HeadGrammarSlot])
         sb.append("NonterminalSymbolNode node" + count + " = new NonterminalSymbolNode(" + 
@@ -75,7 +76,7 @@ class ToJavaCode(private var grammar: Grammar) extends SPPFVisitor {
   override def visit(node: IntermediateNode) {
     if (!node.isVisited) {
       node.setVisited(true)
-      node.setObject("node" + count)
+      node.setObj("node" + count)
       sb.append("IntermediateNode node" + count + " = new IntermediateNode(" + 
         "grammar.getGrammarSlotByName(\"" + 
         node.getGrammarSlot + 
@@ -93,13 +94,13 @@ class ToJavaCode(private var grammar: Grammar) extends SPPFVisitor {
   override def visit(node: PackedNode) {
     if (!node.isVisited) {
       node.setVisited(true)
-      node.setObject("node" + count)
+      node.setObj("node" + count)
       sb.append("PackedNode node" + count + " = new PackedNode(" + "grammar.getGrammarSlotByName(\"" + 
         node.getGrammarSlot + 
         "\"), " + 
         node.getPivot + 
         ", " + 
-        node.getParent.getObject + 
+        node.getParent.getObj + 
         ");\n")
       count += 1
       visitChildren(node)
@@ -110,7 +111,7 @@ class ToJavaCode(private var grammar: Grammar) extends SPPFVisitor {
   override def visit(node: ListSymbolNode) {
     if (!node.isVisited) {
       node.setVisited(true)
-      node.setObject("node" + count)
+      node.setObj("node" + count)
       if (grammar.isNewNonterminal(node.getGrammarSlot.asInstanceOf[HeadGrammarSlot])) {
         val index = grammar.getIndex(node.getGrammarSlot.asInstanceOf[HeadGrammarSlot])
         sb.append("ListSymbolNode node" + count + " = new ListSymbolNode(" + 
@@ -147,9 +148,9 @@ class ToJavaCode(private var grammar: Grammar) extends SPPFVisitor {
 
   private def addChildren(node: SPPFNode) {
     for (child <- node.getChildren) {
-      val childName = child.getObject.asInstanceOf[String]
+      val childName = child.getObj.asInstanceOf[String]
       assert(childName != null)
-      sb.append(node.getObject + ".addChild(" + childName + ");\n")
+      sb.append(node.getObj + ".addChild(" + childName + ");\n")
     }
   }
 

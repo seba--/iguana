@@ -15,10 +15,10 @@ import scala.collection.JavaConversions._
 class LastGrammarSlot(position: Int, 
     previous: BodyGrammarSlot, 
     head: HeadGrammarSlot, 
-    @BeanProperty var `object`: AnyRef) extends BodyGrammarSlot(position, previous, head) {
+    @BeanProperty var obj: AnyRef) extends BodyGrammarSlot(position, previous, head) {
 
   def copy(previous: BodyGrammarSlot, head: HeadGrammarSlot): LastGrammarSlot = {
-    val slot = new LastGrammarSlot(this.position, previous, head, `object`)
+    val slot = new LastGrammarSlot(this.position, previous, head, obj)
     slot.preConditions = preConditions
     slot.popActions = popActions
     slot

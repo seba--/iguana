@@ -36,7 +36,10 @@ class LevelBasedLookupTable(grammar: Grammar, private var chainLength: Int) exte
 
   private var countNonPackedNodes: Int = _
 
-  private var terminals: Array[Array[TerminalSymbolNode]] = new Array[Array[TerminalSymbolNode]](chainLength + 1, 2)
+  private var terminals: Array[Array[TerminalSymbolNode]] = new Array[Array[TerminalSymbolNode]](chainLength + 1)
+  for (i <- 0 until terminals.length)
+    terminals(i) = new Array[TerminalSymbolNode](2)
+
 
   private var u: CuckooHashSet[Descriptor] = new CuckooHashSet(getSize, Descriptor.levelBasedExternalHasher)
 
@@ -62,8 +65,7 @@ class LevelBasedLookupTable(grammar: Grammar, private var chainLength: Int) exte
 
   private var forwardEdges: Array[CuckooHashSet[GSSEdge]] = new Array[CuckooHashSet[GSSEdge]](chainLength)
 
-  private var currentPoppedElements: CuckooHashMap[GSSNode, Set[SPPFNode]] = new CuckooHashMap(initialSize, 
-    GSSNode.levelBasedExternalHasher)
+  private var currentPoppedElements: CuckooHashMap[GSSNode, Set[SPPFNode]] = new CuckooHashMap(GSSNode.levelBasedExternalHasher, initialSize)
 
   private var forwardPoppedElements: Array[CuckooHashMap[GSSNode, Set[SPPFNode]]] = new Array[CuckooHashMap[GSSNode, Set[SPPFNode]]](chainLength)
 
@@ -81,11 +83,11 @@ class LevelBasedLookupTable(grammar: Grammar, private var chainLength: Int) exte
 
   for (i <- 0 until chainLength) {
     forwardDescriptors(i) = new CuckooHashSet(getSize, Descriptor.levelBasedExternalHasher)
-    forwardRs(i) = new ArrayDeque(initialSize)
+    forwardRs(i) = new ArrayDeque[Descriptor](initialSize)
     forwardNodes(i) = new CuckooHashSet(initialSize, NonPackedNode.levelBasedExternalHasher)
     forwardGssNodes(i) = new CuckooHashSet(initialSize, GSSNode.levelBasedExternalHasher)
     forwardEdges(i) = new CuckooHashSet(initialSize, GSSEdge.levelBasedExternalHasher)
-    forwardPoppedElements(i) = new CuckooHashMap(initialSize, GSSNode.levelBasedExternalHasher)
+    forwardPoppedElements(i) = new CuckooHashMap[GSSNode, Set[SPPFNode]](GSSNode.levelBasedExternalHasher, initialSize)
     forwardPackedNodes(i) = new CuckooHashSet(PackedNode.levelBasedExternalHasher)
   }
 

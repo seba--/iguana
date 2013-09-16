@@ -35,7 +35,9 @@ object Input {
     val sb = new StringBuilder()
     val in = new BufferedInputStream(new FileInputStream(file))
     var c = 0
-    while ((c = in.read()) != -1) {
+    def setC(i: Int) = { c = i; c }
+
+    while (setC(in.read()) != -1) {
       sb.append(c.toChar)
     }
     in.close()
@@ -46,7 +48,9 @@ object Input {
     val sb = new StringBuilder()
     val in = new BufferedInputStream(is)
     var c = 0
-    while ((c = in.read()) != -1) {
+    def setC(i: Int) = { c = i; c }
+
+    while (setC(in.read()) != -1) {
       sb.append(c.toChar)
     }
     in.close()
@@ -65,9 +69,7 @@ object Input {
       {
 
     def this(lineColumn: LineColumn) {
-      this()
-      this.lineNumber = lineColumn.lineNumber
-      this.columnNumber = lineColumn.columnNumber
+      this(lineColumn.lineNumber, lineColumn.columnNumber)
     }
 
     override def toString(): String = {
@@ -178,7 +180,7 @@ class Input private (private var input: Array[Int]) {
       return false
     }
     val other = obj.asInstanceOf[Input]
-    Arrays.==(input, other.input)
+    Arrays.equals(input, other.input)
   }
 
   def getPositionInfo(leftExtent: Int, rightExtent: Int): PositionInfo = {
@@ -210,7 +212,7 @@ class Input private (private var input: Array[Int]) {
   override def toString(): String = {
     val charList = new ArrayList[Character]()
     for (i <- input) {
-      val chars = java.lang.Character.toChars(i)
+      val chars = Character.toChars(i)
       for (c <- chars) {
         charList.add(c)
       }

@@ -38,14 +38,16 @@ class MurmurHash2(private var seed: Int) extends HashFunction {
     h
   }
 
-  private def mixK(k: Int): Int = {
+  private def mixK(_k: Int): Int = {
+    var k = _k
     k *= m
     k ^= k >>> r
     k *= m
     k
   }
 
-  private def mixH(h: Int, k: Int): Int = {
+  private def mixH(_h: Int, k: Int): Int = {
+    var h = _h
     h *= m
     h ^= k
     h
@@ -57,7 +59,7 @@ class MurmurHash2(private var seed: Int) extends HashFunction {
 
   override def hash(k1: Int, k2: Int): Int = 0
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 
   override def hash(a: Int, 
       b: Int, 

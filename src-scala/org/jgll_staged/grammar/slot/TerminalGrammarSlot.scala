@@ -2,7 +2,7 @@ package org.jgll_staged.grammar.slot
 
 import java.io.IOException
 import java.io.Writer
-import org.jgll_staged.grammar.java.lang.Character
+import org.jgll_staged.grammar.Character
 import org.jgll_staged.grammar.Range
 import org.jgll_staged.grammar.Symbol
 import org.jgll_staged.grammar.Terminal
@@ -118,7 +118,7 @@ class TerminalGrammarSlot(position: Int,
         terminal.asInstanceOf[Range].getEnd + 
         ") {\n"
     } else {
-      s += "   if(I[ci] == " + terminal.asInstanceOf[java.lang.Character].get + 
+      s += "   if(I[ci] == " + terminal.asInstanceOf[Character].get +
         ") {\n"
     }
     s

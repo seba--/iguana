@@ -1,5 +1,6 @@
 package org.jgll_staged.grammar.condition
 
+import ConditionType._
 //remove if not needed
 import scala.collection.JavaConversions._
 

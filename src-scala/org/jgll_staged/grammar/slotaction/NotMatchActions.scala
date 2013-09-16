@@ -18,7 +18,7 @@ object NotMatchActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         val recognizer = RecognizerFactory.contextFreeRecognizer()
         recognizer.recognize(input, parser.getCurrentGSSNode.getInputIndex, parser.getCurrentInputIndex, 
           ifNot)
@@ -33,8 +33,8 @@ object NotMatchActions {
 
         private val serialVersionUID = 1L
 
-        override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
-          input.`match`(parser.getCurrentGSSNode.getInputIndex, parser.getCurrentInputIndex, s.getChars)
+        override def execute(parser: GLLParserInternals, input: Input): Boolean = {
+          input.`match`(parser.getCurrentGSSNode.getInputIndex, parser.getCurrentInputIndex, s.chars)
         }
       })
     } else if (list.size == 2) {
@@ -44,10 +44,10 @@ object NotMatchActions {
 
         private val serialVersionUID = 1L
 
-        override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+        override def execute(parser: GLLParserInternals, input: Input): Boolean = {
           val begin = parser.getCurrentGSSNode.getInputIndex
           val end = parser.getCurrentInputIndex
-          input.`match`(begin, end, s1.getChars) || input.`match`(begin, end, s2.getChars)
+          input.`match`(begin, end, s1.chars) || input.`match`(begin, end, s2.chars)
         }
       })
     } else {
@@ -59,7 +59,7 @@ object NotMatchActions {
 
         private val serialVersionUID = 1L
 
-        override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+        override def execute(parser: GLLParserInternals, input: Input): Boolean = {
           val begin = parser.getCurrentGSSNode.getInputIndex
           val end = parser.getCurrentInputIndex - 1
           val subInput = new Keyword("", input.subInput(begin, end))

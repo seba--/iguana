@@ -3,7 +3,7 @@ package org.jgll_staged.traversal
 import java.util.ArrayList
 import java.util.Iterator
 import java.util.List
-import org.jgll_staged.grammar.java.lang.Character
+import org.jgll_staged.grammar.Character
 import org.jgll_staged.grammar.CharacterClass
 import org.jgll_staged.grammar.slot.BodyGrammarSlot
 import org.jgll_staged.grammar.slot.HeadGrammarSlot
@@ -27,11 +27,11 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
     if (!terminal.isVisited) {
       terminal.setVisited(true)
       if (terminal.getMatchedChar == TerminalSymbolNode.EPSILON) {
-        terminal.setObject(Result.skip())
+        terminal.setObj(Result.skip())
       } else {
         val result = listener.terminal(terminal.getMatchedChar, input.getPositionInfo(terminal.getLeftExtent, 
           terminal.getRightExtent))
-        terminal.setObject(result)
+        terminal.setObj(result)
       }
     }
   }
@@ -52,21 +52,21 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
           assert(terminal.getRanges.size == 1)
           val result = listener.terminal(terminal.getRanges.get(0).getStart, input.getPositionInfo(i, 
             i))
-          list.add(result.getObject)
+          list.add(result.getObj)
           currentSlot = currentSlot.next()
         }
         val slot = nonterminalSymbolNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
-        listener.startNode(slot.getObject.asInstanceOf[T])
-        val result = listener.endNode(slot.getObject.asInstanceOf[T], list, input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, 
+        listener.startNode(slot.getObj.asInstanceOf[T])
+        val result = listener.endNode(slot.getObj.asInstanceOf[T], list, input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, 
           nonterminalSymbolNode.getRightExtent))
-        nonterminalSymbolNode.setObject(result)
+        nonterminalSymbolNode.setObj(result)
       } else {
         val slot = nonterminalSymbolNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
-        listener.startNode(slot.getObject.asInstanceOf[T])
+        listener.startNode(slot.getObj.asInstanceOf[T])
         visitChildren(nonterminalSymbolNode, this)
-        val result = listener.endNode(slot.getObject.asInstanceOf[T], getChildrenValues(nonterminalSymbolNode), 
+        val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(nonterminalSymbolNode), 
           input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, nonterminalSymbolNode.getRightExtent))
-        nonterminalSymbolNode.setObject(result)
+        nonterminalSymbolNode.setObj(result)
       }
     }
   }
@@ -76,11 +76,11 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
     for (child <- nonterminalSymbolNode.getChildren) {
       val packedNode = child.asInstanceOf[PackedNode]
       val slot = packedNode.getGrammarSlot.asInstanceOf[LastGrammarSlot]
-      listener.startNode(slot.getObject.asInstanceOf[T])
+      listener.startNode(slot.getObj.asInstanceOf[T])
       packedNode.accept(this)
-      val result = listener.endNode(slot.getObject.asInstanceOf[T], getChildrenValues(packedNode), input.getPositionInfo(packedNode.getLeftExtent, 
+      val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(packedNode), input.getPositionInfo(packedNode.getLeftExtent, 
         packedNode.getRightExtent))
-      packedNode.setObject(result)
+      packedNode.setObj(result)
       if (result != Result.filter()) {
         nPackedNodes += 1
       }
@@ -88,7 +88,7 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
     if (nPackedNodes > 1) {
       val result = listener.buildAmbiguityNode(getChildrenValues(nonterminalSymbolNode), input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, 
         nonterminalSymbolNode.getRightExtent))
-      nonterminalSymbolNode.setObject(result)
+      nonterminalSymbolNode.setObj(result)
     }
   }
 
@@ -113,43 +113,43 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
         buildAmbiguityNode(listNode)
       } else {
         val slot = listNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
-        listener.startNode(slot.getObject.asInstanceOf[T])
+        listener.startNode(slot.getObj.asInstanceOf[T])
         visitChildren(listNode, this)
-        val result = listener.endNode(slot.getObject.asInstanceOf[T], getChildrenValues(listNode), input.getPositionInfo(listNode.getLeftExtent, 
+        val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(listNode), input.getPositionInfo(listNode.getLeftExtent, 
           listNode.getRightExtent))
-        listNode.setObject(result)
+        listNode.setObj(result)
       }
     }
   }
 
   private def getChildrenValues(node: SPPFNode): java.lang.Iterable[U] = {
-    val iterator = node.getChildren.iterator()
+    val _iterator = node.getChildren.iterator()
     new java.lang.Iterable[U]() {
 
       override def iterator(): Iterator[U] = {
         new Iterator[U]() {
 
-          private var next: SPPFNode = _
+          private var _next: SPPFNode = _
 
           override def hasNext(): Boolean = {
-            while (iterator.hasNext) {
-              next = iterator.next()
-              if (next.getObject == Result.filter()) {
-                node.setObject(Result.filter())
-                if (!iterator.hasNext) {
+            while (_iterator.hasNext) {
+              _next = _iterator.next()
+              if (_next.getObj == Result.filter()) {
+                node.setObj(Result.filter())
+                if (!_iterator.hasNext) {
                   return false
                 }
-                next = iterator.next()
-              } else if (next.getObject == Result.skip()) {
-                if (!iterator.hasNext) {
+                _next = _iterator.next()
+              } else if (_next.getObj == Result.skip()) {
+                if (!_iterator.hasNext) {
                   return false
                 }
-                next = iterator.next()
-              } else if (next.getObject == null) {
-                if (!iterator.hasNext) {
+                _next = _iterator.next()
+              } else if (_next.getObj == null) {
+                if (!_iterator.hasNext) {
                   return false
                 }
-                next = iterator.next()
+                _next = _iterator.next()
               } else {
                 return true
               }
@@ -158,7 +158,7 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
           }
 
           override def next(): U = {
-            next.getObject.asInstanceOf[Result[U]].getObject
+            _next.getObj.asInstanceOf[Result[U]].getObj
           }
 
           override def remove() {

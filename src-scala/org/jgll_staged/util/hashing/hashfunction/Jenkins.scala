@@ -17,10 +17,9 @@ class Jenkins extends HashFunction {
   override def hash(k1: Int, k2: Int): Int = 0
 
   override def hash(k1: Int, k2: Int, k3: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = c = 0xdeadbeef + seed
+    var a: Int = 0xdeadbeef + seed
+    var b: Int = a
+    var c: Int = a
     a += k1
     b += k2
     c += k3
@@ -63,10 +62,9 @@ class Jenkins extends HashFunction {
       k2: Int, 
       k3: Int, 
       k4: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = c = 0xdeadbeef + seed
+    var a: Int = 0xdeadbeef + seed
+    var b: Int = a
+    var c: Int = a
     a += k1
     b += k2
     c += k3
@@ -111,10 +109,9 @@ class Jenkins extends HashFunction {
       k3: Int, 
       k4: Int, 
       k5: Int): Int = {
-    var a: Int = 0
-    var b: Int = 0
-    var c: Int = 0
-    a = b = c = 0xdeadbeef + seed
+    var a: Int = 0xdeadbeef + seed
+    var b: Int = a
+    var c: Int = a
     a += k1
     b += k2
     c += k3
@@ -155,5 +152,5 @@ class Jenkins extends HashFunction {
     c
   }
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 }

@@ -23,10 +23,10 @@ class Character(private val c: Int) extends AbstractSymbol with Terminal {
     if (this == obj) {
       return true
     }
-    if (!(obj.isInstanceOf[java.lang.Character])) {
+    if (!(obj.isInstanceOf[Character])) {
       return false
     }
-    val other = obj.asInstanceOf[java.lang.Character]
+    val other = obj.asInstanceOf[Character]
     c == other.c
   }
 
@@ -38,8 +38,8 @@ class Character(private val c: Int) extends AbstractSymbol with Terminal {
     set
   }
 
-  override def addConditions(conditions: Collection[Condition]): Terminal = {
-    val terminal = new java.lang.Character(this.c)
+  override def addConditions(conditions: Seq[Condition]): Terminal = {
+    val terminal = new Character(this.c)
     terminal.conditions.addAll(this.conditions)
     terminal.conditions.addAll(conditions)
     terminal

@@ -7,6 +7,8 @@ import scala.reflect.{BeanProperty, BooleanBeanProperty}
 //remove if not needed
 import scala.collection.JavaConversions._
 
+import ConditionType._
+
 @SerialVersionUID(1L)
 class ContextFreeCondition(`type`: ConditionType, @BeanProperty var symbols: List[_ <: Symbol])
     extends Condition(`type`) {

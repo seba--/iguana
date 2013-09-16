@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 
 object LevelMap {
 
-  class MapEntry[K <: Level, V](private var k: K, private var v: V) extends Level {
+  class MapEntry[K <: Level, V](var k: K, var v: V) extends Level {
 
     def getKey(): K = k
 
@@ -23,7 +23,7 @@ object LevelMap {
       if (this == obj) {
         return true
       }
-      if (!(obj.isInstanceOf[MapEntry])) {
+      if (!(obj.isInstanceOf[MapEntry[K,V]])) {
         return false
       }
       val other = obj.asInstanceOf[MapEntry[K, V]]
@@ -35,14 +35,10 @@ object LevelMap {
 }
 
 @SerialVersionUID(1L)
-class LevelMap[K <: Level, V](decomposer: ExternalHasher[K]) extends Serializable {
+class LevelMap[K <: Level, V >: Null](decomposer: ExternalHasher[K], initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY)
+                                     (implicit val kman: Manifest[K], implicit val vman: Manifest[V]) extends Serializable {
 
   private var set: LevelSet[MapEntry[K, V]] = new LevelSet(new MapEntryExternalHasher(decomposer))
-
-  def this(initalCapacity: Int, decomposer: ExternalHasher[K]) {
-    this()
-    set = new LevelSet(initalCapacity, new MapEntryExternalHasher(decomposer))
-  }
 
   def put(key: K, value: V): V = {
     val entry = set.add(new MapEntry[K, V](key, value))

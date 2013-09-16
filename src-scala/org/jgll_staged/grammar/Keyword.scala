@@ -19,27 +19,22 @@ object Keyword {
   @SerialVersionUID(1L)
   class KeywordExternalHasher extends ExternalHasher[Keyword] {
 
-    override def hash(k: Keyword, f: HashFunction): Int = f.hash(k.getChars)
+    override def hash(k: Keyword, f: HashFunction): Int = f.hash(k.chars)
 
-    override def equals(k1: Keyword, k2: Keyword): Boolean = Arrays.==(k1.chars, k2.chars)
+    override def equals(k1: Keyword, k2: Keyword): Boolean = Arrays.equals(k1.chars, k2.chars)
   }
 }
 
 @SerialVersionUID(1L)
-class Keyword(@BeanProperty val name: String, s: String) extends AbstractSymbol {
+class Keyword(@BeanProperty val name: String, val chars: Array[Int]) extends AbstractSymbol {
 
-  @BeanProperty
-  val chars = Input.toIntArray(s)
-
-  def this(name: String, chars: Array[Int]) {
-    this()
-    this.chars = chars
-    this.name = name
+  def this(name: String, s: String) {
+    this(name, Input.toIntArray(s))
   }
 
   def size(): Int = chars.length
 
-  def getFirstTerminal(): Terminal = new java.lang.Character(chars(0))
+  def getFirstTerminal(): Terminal = new Character(chars(0))
 
   override def toString(): String = getName
 
@@ -51,14 +46,14 @@ class Keyword(@BeanProperty val name: String, s: String) extends AbstractSymbol 
       return false
     }
     val other = obj.asInstanceOf[Keyword]
-    Arrays.==(chars, other.chars)
+    Arrays.equals(chars, other.chars)
   }
 
   override def hashCode(): Int = {
     externalHasher.hash(this, HashFunctions.defaulFunction())
   }
 
-  override def addConditions(conditions: Collection[Condition]): Keyword = {
+  override def addConditions(conditions: Seq[Condition]): Keyword = {
     val keyword = new Keyword(this.name, this.chars)
     keyword.conditions.addAll(this.conditions)
     keyword.conditions.addAll(conditions)

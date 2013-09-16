@@ -10,10 +10,10 @@ import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class CharacterClass(ranges: List[Range]) extends AbstractSymbol with Terminal {
+class CharacterClass(_ranges: List[Range]) extends AbstractSymbol with Terminal {
 
   @BeanProperty
-  val ranges = Collections.unmodifiableList(ranges)
+  val ranges = Collections.unmodifiableList(_ranges)
 
   private var testSet: BitSet = new BitSet()
 
@@ -76,7 +76,7 @@ class CharacterClass(ranges: List[Range]) extends AbstractSymbol with Terminal {
 
   override def asBitSet(): BitSet = testSet
 
-  override def addConditions(conditions: Collection[Condition]): Terminal = {
+  override def addConditions(conditions: Seq[Condition]): Terminal = {
     val characterClass = new CharacterClass(this.ranges)
     characterClass.conditions.addAll(this.conditions)
     characterClass.conditions.addAll(conditions)

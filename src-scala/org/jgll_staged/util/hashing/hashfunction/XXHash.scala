@@ -15,9 +15,9 @@ object XXHash {
   private val PRIME5 = 0x165667b1
 }
 
-class XXHash(seed: Int) extends HashFunction {
+class XXHash(_seed: Int) extends HashFunction {
 
-  private var seed: Int = seed + PRIME5
+  private var seed: Int = _seed + PRIME5
 
   override def hash(k: Int): Int = 0
 
@@ -82,5 +82,5 @@ class XXHash(seed: Int) extends HashFunction {
     h
   }
 
-  override def hash(keys: Int*): Int = 0
+  override def hash(keys: Array[Int]): Int = 0
 }

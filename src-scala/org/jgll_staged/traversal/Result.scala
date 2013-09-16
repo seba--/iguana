@@ -7,13 +7,13 @@ import scala.collection.JavaConversions._
 
 object Result {
 
-  private val filter = new Result[Any](null)
+  private val _filter = new Result[Any](null)
 
-  private val skip = new Result[Any](null)
+  private val _skip = new Result[Any](null)
 
-  def filter[K](): Result[K] = filter.asInstanceOf[Result[K]]
+  def filter[K](): Result[K] = _filter.asInstanceOf[Result[K]]
 
-  def skip[K](): Result[K] = skip.asInstanceOf[Result[K]]
+  def skip[K](): Result[K] = _skip.asInstanceOf[Result[K]]
 
   def accept[K](k: K): Result[K] = {
     if (k == null) {
@@ -23,4 +23,4 @@ object Result {
   }
 }
 
-class Result[T] private (@BeanProperty var `object`: T)
+class Result[T] private (@BeanProperty var obj: T)

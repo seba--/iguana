@@ -7,7 +7,7 @@ import java.util
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-abstract class AbstractSymbol(_conditions: Seq[Condition]) extends Symbol {
+abstract class AbstractSymbol(_conditions: Seq[Condition] = Seq()) extends Symbol {
 
   protected val conditions: Seq[Condition] = new util.ArrayList(_conditions)
 

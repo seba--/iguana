@@ -11,13 +11,13 @@ import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
 class AbstractPattern(nonteriminal: Nonterminal, 
-    parent: List[Symbol], 
+    _parent: List[Symbol],
     protected val position: Int, 
-    child: List[Symbol]) extends Serializable {
+    _child: List[Symbol]) extends Serializable {
 
-  protected val parent = new ArrayList(parent)
+  protected val parent = new ArrayList(_parent)
 
-  protected val child = new ArrayList(child)
+  protected val child = new ArrayList(_child)
 
   protected val nonterminal = nonteriminal
 

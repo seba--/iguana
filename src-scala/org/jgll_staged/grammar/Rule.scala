@@ -78,13 +78,11 @@ class Rule(@BeanProperty val head: Nonterminal, _body: List[_ <: Symbol], @BeanP
     body.get(index)
   }
 
-  def getObject = `object`
-
   override def toString(): String = {
     val sb = new StringBuilder()
     sb.append(head).append(" ::= ")
     for (s <- body) {
-      sb ++ s ++ " "
+      sb ++= s.toString ++= " "
     }
     sb.toString
   }

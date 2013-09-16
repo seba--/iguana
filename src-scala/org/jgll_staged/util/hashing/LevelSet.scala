@@ -4,7 +4,8 @@ package org.jgll_staged.util.hashing
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class LevelSet[T <: Level](initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY, decomposer: ExternalHasher[T])
+class LevelSet[T >: Null <: Level](decomposer: ExternalHasher[T], initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY)
+                          (implicit val m: Manifest[T])
   extends CuckooHashSet[T](initalCapacity, decomposer) {
 
   private var level: Int = _
@@ -17,7 +18,7 @@ class LevelSet[T <: Level](initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_C
   }
 
   override def clear() {
-    size = 0
+    _size = 0
     rehashCount = 0
     enlargeCount = 0
   }

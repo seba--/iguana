@@ -60,17 +60,17 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
   }
 
   private def printAvgStdDev(name: String, measurements: List[Long]) {
-    var sum = 0
+    var sum = 0l
     for (l <- measurements) {
       sum += l
     }
-    val avg = sum / measurements.size.toDouble
-    var sd = 0
+    val avg: Long = (sum / measurements.size.toDouble).toLong
+    var sd = 0l
     for (l <- measurements) {
       sd = sd + (l - avg) * (l - avg)
     }
     sd = sd / (measurements.size - 1)
-    println(String.format("%s\t %.2f (%.2f)", name, avg, sd))
+    println("%s\t %.2f (%.2f)".format(name, avg, sd))
   }
 
   private def measure(x: Runnable): Long = {

@@ -13,7 +13,7 @@ object LineActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         input.isEndOfLine(parser.getCurrentInputIndex)
       }
     })
@@ -24,7 +24,7 @@ object LineActions {
 
       private val serialVersionUID = 1L
 
-      override def execute(parser: GLLParserInternals, input: Input): java.lang.Boolean = {
+      override def execute(parser: GLLParserInternals, input: Input): Boolean = {
         input.isStartOfLine(parser.getCurrentInputIndex)
       }
     })

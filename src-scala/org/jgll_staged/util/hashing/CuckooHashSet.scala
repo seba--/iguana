@@ -16,8 +16,8 @@ object CuckooHashSet {
 
   private val DEFAULT_LOAD_FACTOR = 0.49f
 
-  @SafeVarargs
-  def from[T](decomposer: ExternalHasher[T], elements: T*): CuckooHashSet[T] = {
+  def from[T >: Null](decomposer: ExternalHasher[T], elements: T*)
+                     (implicit m: Manifest[T]): CuckooHashSet[T] = {
     val set = new CuckooHashSet[T](decomposer)
     for (e <- elements) {
       set.add(e)
@@ -27,7 +27,8 @@ object CuckooHashSet {
 }
 
 @SerialVersionUID(1L)
-class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadFactor: Float, decomposer: ExternalHasher[T])
+class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private var loadFactor: Float, decomposer: ExternalHasher[T])
+                              (implicit val manifest: Manifest[T])
     extends Serializable with java.lang.Iterable[T] {
 
   private var capacity: Int = 1
@@ -44,9 +45,9 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
   private var function2: HashFunction = _
 
-  protected var table1: Array[T] = new Array[T](tableSize).asInstanceOf[Array[T]]
+  protected var table1: Array[T] = new Array[T](tableSize)
 
-  protected var table2: Array[T] = new Array[T](tableSize).asInstanceOf[Array[T]]
+  protected var table2: Array[T] = new Array[T](tableSize)
 
   protected var tableSize: Int = capacity / 2
 
@@ -62,11 +63,11 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
   generateNewHashFunctions()
 
-  def this(decomposer: ExternalHasher[T]) {
+  def this(decomposer: ExternalHasher[T])(implicit m: Manifest[T]) {
     this(DEFAULT_INITIAL_CAPACITY, DEFAULT_LOAD_FACTOR, decomposer)
   }
 
-  def this(initalCapacity: Int, decomposer: ExternalHasher[T]) {
+  def this(initalCapacity: Int, decomposer: ExternalHasher[T])(implicit m: Manifest[T]) {
     this(initalCapacity, DEFAULT_LOAD_FACTOR, decomposer)
   }
 
@@ -234,14 +235,16 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
         while (index1 < table1.length) {
           if (!isEntryEmpty(table1(index1))) {
             it += 1
-            return table1(index1 += 1)
+            index1 += 1
+            return table1(index1-1)
           }
           index1 += 1
         }
         while (index2 < table2.length) {
           if (!isEntryEmpty(table2(index2))) {
             it += 1
-            return table2(index2 += 1)
+            index2 += 1
+            return table2(index2-1)
           }
           index2 += 1
         }

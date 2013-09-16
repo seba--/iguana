@@ -17,7 +17,6 @@ object CollectionsUtil {
     sb.toString
   }
 
-  @SafeVarargs
   def set[T](objects: T*): Set[T] = {
     val set = new HashSet[T]()
     for (t <- objects) {
@@ -26,6 +25,5 @@ object CollectionsUtil {
     set
   }
 
-  @SafeVarargs
   def list[T](objects: T*): List[T] = Arrays.asList(objects:_*)
 }

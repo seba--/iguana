@@ -8,7 +8,7 @@ import scala.collection.JavaConversions._
 
 object CuckooHashMap {
 
-  class MapEntry[K, V](private var k: K, private var v: V) {
+  class MapEntry[K: Manifest, V: Manifest](var k: K, var v: V) {
 
     def getKey(): K = k
 
@@ -23,7 +23,7 @@ object CuckooHashMap {
       if (this == obj) {
         return true
       }
-      if (!(obj.isInstanceOf[MapEntry])) {
+      if (!(obj.isInstanceOf[MapEntry[K,V]])) {
         return false
       }
       val other = obj.asInstanceOf[MapEntry[K, V]]
@@ -31,21 +31,18 @@ object CuckooHashMap {
     }
 
     override def toString(): String = {
-      "(" + k.toString + ", " + (if (v == null) "" else v.toString) + 
+      "(" + k.toString + ", " + (if (v == null) "" else v.toString) +
         ")"
     }
   }
 }
 
 @SerialVersionUID(1L)
-class CuckooHashMap[K, V](decomposer: ExternalHasher[K]) extends Serializable {
+class CuckooHashMap[K, V >: Null](decomposer: ExternalHasher[K], initialCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY)
+                                 (implicit val kmanifest: Manifest[K], implicit val vmanifest: Manifest[V])
+  extends Serializable {
 
   private var set: CuckooHashSet[MapEntry[K, V]] = new CuckooHashSet(new MapEntryExternalHasher(decomposer))
-
-  def this(initialCapacity: Int, decomposer: ExternalHasher[K]) {
-    this()
-    set = new CuckooHashSet(initialCapacity, new MapEntryExternalHasher(decomposer))
-  }
 
   def get(key: K): V = {
     val entry = set.get(new MapEntry[K, V](key, null))

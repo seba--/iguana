@@ -30,11 +30,11 @@ object GSSEdge {
 
     override def hash(edge: GSSEdge, f: HashFunction): Int = {
       if (edge.sppfNode.isInstanceOf[TerminalSymbolNode]) {
-        f.hash(edge.src.getGrammarSlot.getId, edge.src.getInputIndex, edge.dst.getGrammarSlot.getId, 
-          edge.dst.getInputIndex, 31, edge.sppfNode.asInstanceOf[TerminalSymbolNode].getMatchedChar)
+        f.hash(Array(edge.src.getGrammarSlot.getId, edge.src.getInputIndex, edge.dst.getGrammarSlot.getId,
+          edge.dst.getInputIndex, 31, edge.sppfNode.asInstanceOf[TerminalSymbolNode].getMatchedChar))
       } else {
-        f.hash(edge.src.getGrammarSlot.getId, edge.src.getInputIndex, edge.dst.getGrammarSlot.getId, 
-          edge.dst.getInputIndex, 17, edge.sppfNode.getGrammarSlot.getId)
+        f.hash(Array(edge.src.getGrammarSlot.getId, edge.src.getInputIndex, edge.dst.getGrammarSlot.getId,
+          edge.dst.getInputIndex, 17, edge.sppfNode.getGrammarSlot.getId))
       }
     }
 
