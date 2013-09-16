@@ -21,7 +21,7 @@ class NonterminalSymbolNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Int
     if (!(obj.isInstanceOf[NonterminalSymbolNode])) {
       return false
     }
-    super == obj
+    super.equals(obj)
   }
 
   override def getLabel(): String = {

@@ -46,18 +46,7 @@ abstract class SPPFNode extends Level {
     }
     if (this.isAmbiguous && node.isAmbiguous) {
       val thisIt = getChildren.iterator()
-      outer: while (thisIt.hasNext) {
-        val thisChild = thisIt.next()
-        val otherIt = node.getChildren.iterator()
-        while (otherIt.hasNext) {
-          val otherChild = otherIt.next()
-          if (thisChild.deepEquals(otherChild)) {
-            //continue
-          }
-        }
-        return false
-      }
-      return true
+      return handleAmbiguous(thisIt, node)
     }
     val thisIt = getChildren.iterator()
     val otherIt = node.getChildren.iterator()
@@ -69,5 +58,28 @@ abstract class SPPFNode extends Level {
       }
     }
     true
+  }
+
+  def handleAmbiguous(thisIt: Iterator[SPPFNode], node: SPPFNode): Boolean = {
+    def innerLoop: Boolean = {
+      val otherIt = node.getChildren.iterator()
+      val thisChild = thisIt.next()
+      while (otherIt.hasNext) {
+        val otherChild = otherIt.next()
+        if (thisChild.deepEquals(otherChild)) {
+          // continue outer
+          return true
+        }
+      }
+      return false
+    }
+
+    // outer:
+    while (thisIt.hasNext) {
+      val continue = innerLoop
+      if (!continue)
+        return false
+    }
+    return true
   }
 }

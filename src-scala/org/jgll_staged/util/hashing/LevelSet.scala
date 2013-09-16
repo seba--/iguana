@@ -4,13 +4,10 @@ package org.jgll_staged.util.hashing
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class LevelSet[T <: Level](decomposer: ExternalHasher[T]) extends CuckooHashSet[T](decomposer) {
+class LevelSet[T <: Level](initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY, decomposer: ExternalHasher[T])
+  extends CuckooHashSet[T](initalCapacity, decomposer) {
 
   private var level: Int = _
-
-  def this(initalCapacity: Int, decomposer: ExternalHasher[T]) {
-    super(initalCapacity, decomposer)
-  }
 
   override def isEntryEmpty(t: T): Boolean = t == null || t.getLevel != level
 

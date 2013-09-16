@@ -7,21 +7,13 @@ import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class Nonterminal(@BeanProperty val name: String, private val ebnfList: Boolean)
-    extends AbstractSymbol {
+class Nonterminal(@BeanProperty val name: String,
+                  private val ebnfList: Boolean = false,
+                  conditions: Seq[Condition] = Seq())
+    extends AbstractSymbol(conditions) {
 
   @BooleanBeanProperty
   var collapsible: Boolean = _
-
-  def this(name: String) {
-    this(name, false)
-  }
-
-  def this(name: String, ebnfList: Boolean, conditions: java.lang.Iterable[Condition]) {
-    super(conditions)
-    this.name = name
-    this.ebnfList = ebnfList
-  }
 
   def isEbnfList(): Boolean = {
     if (ebnfList == true) {
@@ -34,7 +26,7 @@ class Nonterminal(@BeanProperty val name: String, private val ebnfList: Boolean)
     false
   }
 
-  override def addConditions(conditions: Collection[Condition]): Symbol = {
+  override def addConditions(conditions: Seq[Condition]): Symbol = {
     val nonterminal = new Nonterminal(this.name)
     nonterminal.conditions.addAll(this.conditions)
     nonterminal.conditions.addAll(conditions)

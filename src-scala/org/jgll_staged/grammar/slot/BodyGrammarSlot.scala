@@ -13,10 +13,10 @@ import org.jgll_staged.util.Input
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-abstract class BodyGrammarSlot(protected val position: Int, protected var previous: BodyGrammarSlot, protected var head: HeadGrammarSlot)
+abstract class BodyGrammarSlot(protected val position: Int, protected var _previous: BodyGrammarSlot, protected var head: HeadGrammarSlot)
     extends GrammarSlot with Serializable {
 
-  protected var next: BodyGrammarSlot = _
+  protected var _next: BodyGrammarSlot = _
 
   protected var preConditions: List[SlotAction[Boolean]] = new ArrayList()
 
@@ -28,8 +28,8 @@ abstract class BodyGrammarSlot(protected val position: Int, protected var previo
     throw new IllegalArgumentException("Position cannot be negative.")
   }
 
-  if (previous != null) {
-    previous.next = this
+  if (_previous != null) {
+    _previous._next = this
   }
 
   def addPopAction(popAction: SlotAction[Boolean]) {
@@ -45,8 +45,7 @@ abstract class BodyGrammarSlot(protected val position: Int, protected var previo
   def getPreConditions(): List[SlotAction[Boolean]] = preConditions
 
   protected def executePreConditions(parser: GLLParserInternals, input: Input): Boolean = {
-    preConditions.find(_.execute(parser, input)).map(true)
-      .getOrElse(false)
+    preConditions.find(_.execute(parser, input)).isDefined
   }
 
   def testFirstSet(index: Int, input: Input): Boolean
@@ -55,23 +54,23 @@ abstract class BodyGrammarSlot(protected val position: Int, protected var previo
 
   def codeIfTestSetCheck(writer: Writer): Unit
 
-  def isFirst(): Boolean = previous == null
+  def isFirst(): Boolean = _previous == null
 
   def codeElseTestSetCheck(writer: Writer) {
     writer.append("} else { newParseError(grammar.getGrammarSlot(" + this.id + 
       "), ci); label = L0; return; } \n")
   }
 
-  def next(): BodyGrammarSlot = next
+  def next(): BodyGrammarSlot = _next
 
-  def previous(): BodyGrammarSlot = previous
+  def previous(): BodyGrammarSlot = _previous
 
   def setPrevious(previous: BodyGrammarSlot) {
-    this.previous = previous
+    this._previous = previous
   }
 
   def setNext(next: BodyGrammarSlot) {
-    this.next = next
+    this._next = next
   }
 
   def getPosition(): Int = position

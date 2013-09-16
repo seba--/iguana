@@ -154,7 +154,11 @@ class GLLParserImpl(protected var lookupTable: LookupTable) extends GLLParser wi
     v
   }
 
-  override def getTerminalNode(c: Int): TerminalSymbolNode = lookupTable.getTerminalNode(c, ci += 1)
+  override def getTerminalNode(c: Int): TerminalSymbolNode = {
+    val oldCi = ci
+    ci += 1
+    lookupTable.getTerminalNode(c, oldCi)
+  }
 
   override def getEpsilonNode(): TerminalSymbolNode = {
     lookupTable.getTerminalNode(TerminalSymbolNode.EPSILON, ci)
@@ -181,7 +185,7 @@ class GLLParserImpl(protected var lookupTable: LookupTable) extends GLLParser wi
   }
 
   def getIntermediateNode(slot: BodyGrammarSlot, leftChild: SPPFNode, rightChild: SPPFNode): SPPFNode = {
-    val previous = slot.previous()
+    val previous = slot.previous
     if (previous.isFirst) {
       if (previous.isInstanceOf[TerminalGrammarSlot] || previous.isInstanceOf[KeywordGrammarSlot]) {
         return rightChild
@@ -215,7 +219,7 @@ class GLLParserImpl(protected var lookupTable: LookupTable) extends GLLParser wi
   override def getKeywordStub(keyword: Keyword, slot: HeadGrammarSlot, inputIndex: Int): NonPackedNode = {
     val nextIndex = inputIndex + keyword.size
     val node = lookupTable.getNonPackedNode(slot, inputIndex, nextIndex)
-    node.addFirstPackedNode(slot.getAlternateAt(0).getLastSlot.next(), nextIndex)
+    node.addFirstPackedNode(slot.getAlternateAt(0).getLastSlot.next, nextIndex)
     node.asInstanceOf[NonterminalSymbolNode].setKeywordNode(true)
     ci = nextIndex
     node

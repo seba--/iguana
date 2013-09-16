@@ -12,7 +12,7 @@ class IntermediateNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Int)
     if (!(obj.isInstanceOf[IntermediateNode])) {
       return false
     }
-    super == obj
+    super.equals(obj)
   }
 
   override def accept(visitAction: SPPFVisitor) {

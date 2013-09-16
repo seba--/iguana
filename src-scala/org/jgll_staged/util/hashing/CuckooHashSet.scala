@@ -12,7 +12,7 @@ import scala.collection.JavaConversions._
 
 object CuckooHashSet {
 
-  private val DEFAULT_INITIAL_CAPACITY = 16
+  val DEFAULT_INITIAL_CAPACITY = 16
 
   private val DEFAULT_LOAD_FACTOR = 0.49f
 
@@ -32,7 +32,7 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
   private var capacity: Int = 1
 
-  protected var size: Int = _
+  protected var _size: Int = _
 
   private var threshold: Int = (loadFactor * capacity).toInt
 
@@ -91,8 +91,9 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
     null
   }
 
-  def add(key: T): T = {
-    if (size >= threshold) {
+  def add(_key: T): T = {
+    var key = _key
+    if (_size >= threshold) {
       enlargeTables()
     }
     val e = get(key)
@@ -105,15 +106,16 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
       rehash()
       key = tryInsert(key)
     }
-    size += 1
+    _size += 1
     null
   }
 
   protected def isEntryEmpty(e: T): Boolean = e == null
 
-  private def tryInsert(key: T): T = {
+  private def tryInsert(_key: T): T = {
+    var key = _key
     var i = 0
-    while (i < size + 1) {
+    while (i < _size + 1) {
       i += 1
       key = insert(key)
       if (key == null) {
@@ -123,7 +125,8 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
     key
   }
 
-  private def insert(key: T): T = {
+  private def insert(_key: T): T = {
+    var key: T = _key
     var index = indexFor(externalHasher.hash(key, function1))
     if (isEntryEmpty(table1(index))) {
       table1(index) = key
@@ -145,37 +148,36 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
   private def rehash() {
     rehashCount += 1
-    table1Loop: for (i <- 0 until table1.length) {
+    for (i <- 0 until table1.length) {
       val key = table1(i)
       if (!isEntryEmpty(key)) {
         if (indexFor(externalHasher.hash(key, function1)) != i) {
           var tmp = table1(i)
           table1(i) = null
           tmp = tryInsert(tmp)
-          if (tmp == null) {
-            //continue
+          if (tmp != null) {
+            putInEmptySlot(tmp)
+            generateNewHashFunctions()
+            rehash()
+            return
           }
-          putInEmptySlot(tmp)
-          generateNewHashFunctions()
-          rehash()
-          return
         }
       }
     }
-    table2Loop: for (i <- 0 until table2.length) {
+
+    for (i <- 0 until table2.length) {
       val key = table2(i)
       if (!isEntryEmpty(key)) {
         if (indexFor(externalHasher.hash(key, function2)) != i) {
           var tmp = table2(i)
           table2(i) = null
           tmp = tryInsert(tmp)
-          if (tmp == null) {
-            //continue
+          if (tmp != null) {
+            putInEmptySlot(tmp)
+            generateNewHashFunctions()
+            rehash()
+            return
           }
-          putInEmptySlot(tmp)
-          generateNewHashFunctions()
-          rehash()
-          return
         }
       }
     }
@@ -207,7 +209,7 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
     rehash()
   }
 
-  def size(): Int = size
+  def size(): Int = _size
 
   def getRehashCount(): Int = rehashCount
 
@@ -215,7 +217,7 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
   protected def indexFor(hash: Int): Int = hash & (tableSize - 1)
 
-  def isEmpty(): Boolean = size == 0
+  def isEmpty(): Boolean = _size == 0
 
   override def iterator(): Iterator[T] = {
     new Iterator[T]() {
@@ -226,7 +228,7 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
 
       var index2: Int = 0
 
-      override def hasNext(): Boolean = it < size
+      override def hasNext(): Boolean = it < _size
 
       override def next(): T = {
         while (index1 < table1.length) {
@@ -256,13 +258,13 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
     var index = indexFor(externalHasher.hash(key, function1))
     if (externalHasher.==(key, table1(index))) {
       table1(index) = null
-      size -= 1
+      _size -= 1
       return true
     }
     index = indexFor(externalHasher.hash(key, function2))
     if (externalHasher.==(key, table2(index))) {
       table2(index) = null
-      size -= 1
+      _size -= 1
       return true
     }
     false
@@ -273,7 +275,7 @@ class CuckooHashSet[T](@BeanProperty var initialCapacity: Int, private var loadF
       table1(i) = null
       table2(i) = null
     }
-    size = 0
+    _size = 0
     rehashCount = 0
     enlargeCount = 0
   }

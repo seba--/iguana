@@ -12,7 +12,7 @@ object EOF {
 }
 
 @SerialVersionUID(1L)
-class EOF private () extends java.lang.Character(0) {
+class EOF private () extends Character(0) {
 
   override def toString(): String = "$"
 }

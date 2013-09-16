@@ -30,10 +30,10 @@ class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends Gramma
   var directNullable: Boolean = _
 
   @BeanProperty
-  val firstSet = new HashSet()
+  val firstSet = new HashSet[Terminal]()
 
   @BeanProperty
-  val followSet = new HashSet()
+  val followSet = new HashSet[Terminal]()
 
   @BeanProperty
   var epsilonAlternate: Alternate = _
@@ -137,11 +137,11 @@ class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends Gramma
   def getCountAlternates(): Int = alternates.size
 
   def contains(list: List[Symbol]): Boolean = {
-    alternates.find(_.`match`(list)).map(true).getOrElse(false)
+    alternates.find(_.`match`(list)).isDefined
   }
 
   def contains(set: Set[List[Symbol]]): Boolean = {
-    set.find(contains(_)).map(true).getOrElse(false)
+    set.find(contains(_)).isDefined
   }
 
   override def toString(): String = nonterminal.toString

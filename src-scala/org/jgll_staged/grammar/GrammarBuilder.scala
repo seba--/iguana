@@ -40,6 +40,8 @@ import GrammarBuilder._
 //remove if not needed
 import scala.collection.JavaConversions._
 
+import org.jgll_staged.grammar.condition.ConditionType._
+
 object GrammarBuilder {
 
   private val log = LoggerWrapper.getLogger(classOf[GrammarBuilder])
@@ -47,12 +49,12 @@ object GrammarBuilder {
   def fromKeyword(keyword: Keyword): Rule = {
     val builder = new Rule.Builder(new Nonterminal(keyword.getName))
     for (i <- keyword.getChars) {
-      builder.addSymbol(new java.lang.Character(i))
+      builder.addSymbol(new Character(i))
     }
     builder.build()
   }
 
-  @SafeVarargs
+  // @SafeVarargs
   protected def set[T](objects: T*): Set[T] = {
     val set = new HashSet[T]()
     for (t <- objects) {
@@ -150,8 +152,8 @@ class GrammarBuilder(var name: String) extends Serializable {
       throw new IllegalArgumentException("Rule cannot be null.")
     }
     val conditions = new HashMap[BodyGrammarSlot, java.lang.Iterable[Condition]]()
-    val head = rule.getHead
-    val body = rule.getBody
+    val head = rule.head
+    val body: Seq[Symbol] = rule.body
     val headGrammarSlot = getHeadGrammarSlot(head)
     var currentSlot: BodyGrammarSlot = null
     if (body.size == 0) {
@@ -195,7 +197,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
   }
 
-  private def addCondition(slot: BodyGrammarSlot, condition: Condition) condition.getType match {
+  private def addCondition(slot: BodyGrammarSlot, condition: Condition) = condition.getType match {
     case FOLLOW => //break
     case NOT_FOLLOW => if (condition.isInstanceOf[TerminalCondition]) {
       NotFollowActions.fromTerminalList(slot.next(), condition.asInstanceOf[TerminalCondition].getTerminals)
@@ -350,12 +352,13 @@ class GrammarBuilder(var name: String) extends Serializable {
     while (changed) {
       changed = false
       for (head <- nonterminals; alternate <- head.getAlternates) {
-        changed |= addFirstSet(head.getFirstSet, alternate.getFirstSlot, changed)
+        changed |= addFirstSet(head.firstSet, alternate.getFirstSlot, changed)
       }
     }
   }
 
-  private def addFirstSet(set: Set[Terminal], currentSlot: BodyGrammarSlot, changed: Boolean): Boolean = {
+  private def addFirstSet(set: Set[Terminal], currentSlot: BodyGrammarSlot, _changed: Boolean): Boolean = {
+    var changed = _changed
     if (currentSlot.isInstanceOf[EpsilonGrammarSlot]) {
       set.add(Epsilon.getInstance) || changed
     } else if (currentSlot.isInstanceOf[TerminalGrammarSlot]) {
@@ -418,8 +421,8 @@ class GrammarBuilder(var name: String) extends Serializable {
       }
     }
     for (head <- nonterminals) {
-      head.getFollowSet.remove(Epsilon.getInstance)
-      head.getFollowSet.add(EOF.getInstance)
+      head.followSet - (Epsilon.getInstance)
+      head.followSet + (EOF.getInstance)
     }
   }
 
@@ -458,13 +461,16 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
     var i = 0
     for (head <- nonterminals) {
-      head.setId(i += 1)
+      head.setId(i)
+      i += 1
     }
     for (slot <- slots) {
-      slot.setId(i += 1)
+      slot.setId(i)
+      i += 1
     }
     for (slot <- conditionSlots) {
-      slot.setId(i += 1)
+      slot.setId(i)
+      i += 1
     }
   }
 
@@ -752,7 +758,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     copy = new HeadGrammarSlot(head.getNonterminal)
     addNewNonterminal(copy)
     map.put(head, copy)
-    val copyAlternates = copyAlternates(copy, head.getAlternates)
+    val copyAlternates = doCopyAlternates(copy, head.getAlternates)
     copy.setAlternates(copyAlternates)
     for (alt <- copyAlternates if alt.getSlotAt(alt.size - 1).isInstanceOf[NonterminalGrammarSlot]) {
       val nonterminal = alt.getSlotAt(alt.size - 1).asInstanceOf[NonterminalGrammarSlot]
@@ -764,7 +770,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     copy
   }
 
-  private def copyAlternates(head: HeadGrammarSlot, list: java.lang.Iterable[Alternate]): List[Alternate] = {
+  private def doCopyAlternates(head: HeadGrammarSlot, list: java.lang.Iterable[Alternate]): List[Alternate] = {
     val copyList = new ArrayList[Alternate]()
     for (alt <- list) {
       copyList.add(copyAlternate(alt, head))
@@ -804,7 +810,7 @@ class GrammarBuilder(var name: String) extends Serializable {
       parent: Rule, 
       position: Int, 
       child: Rule) {
-    val pattern = new PrecedencePattern(nonterminal, parent.getBody, position, child.getBody)
+    val pattern = new PrecedencePattern(nonterminal, parent.body, position, child.body)
     if (precednecePatternsMap.containsKey(nonterminal)) {
       precednecePatternsMap.get(nonterminal).add(pattern)
     } else {
@@ -849,7 +855,8 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
   }
 
-  private def calculateReachabilityGraph(set: Set[HeadGrammarSlot], currentSlot: BodyGrammarSlot, changed: Boolean): Boolean = {
+  private def calculateReachabilityGraph(set: Set[HeadGrammarSlot], currentSlot: BodyGrammarSlot, _changed: Boolean): Boolean = {
+    var changed = _changed
     if (currentSlot.isInstanceOf[EpsilonGrammarSlot]) {
       false
     } else if (currentSlot.isInstanceOf[TerminalGrammarSlot]) {
@@ -948,8 +955,9 @@ class GrammarBuilder(var name: String) extends Serializable {
 
   private def test(slot: BodyGrammarSlot, 
       node: Node[Symbol], 
-      symbolIndex: Int, 
+      _symbolIndex: Int,
       headGrammarSlot: HeadGrammarSlot) {
+    var symbolIndex = _symbolIndex
     if (node.size == 0) {
       new LastGrammarSlot(symbolIndex, slot, headGrammarSlot, null)
       return

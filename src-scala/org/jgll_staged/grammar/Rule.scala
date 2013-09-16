@@ -13,9 +13,9 @@ import scala.collection.JavaConversions._
 
 object Rule {
 
-  class Builder(private var head: Nonterminal) {
+  class Builder(var head: Nonterminal) {
 
-    private var body: List[Symbol] = new ArrayList()
+    var body: List[Symbol] = new ArrayList()
 
     def addSymbol(symbol: Symbol): Builder = {
       body.add(symbol)
@@ -27,11 +27,11 @@ object Rule {
 }
 
 @SerialVersionUID(1L)
-class Rule(@BeanProperty val head: Nonterminal, body: List[_ <: Symbol], @BeanProperty val `object`: AnyRef)
+class Rule(@BeanProperty val head: Nonterminal, _body: List[_ <: Symbol], @BeanProperty val `object`: AnyRef)
     extends Serializable {
 
   @BeanProperty
-  val body = new ArrayList(body)
+  val body: List[Symbol] = new ArrayList(_body)
 
   @BeanProperty
   var conditions: List[Condition] = new ArrayList()
@@ -52,16 +52,16 @@ class Rule(@BeanProperty val head: Nonterminal, body: List[_ <: Symbol], @BeanPr
     this(head, new ArrayList[Symbol](), null)
   }
 
-  private def this(builder: Builder) {
-    this(builder.head, builder.body)
-  }
-
   def this(head: Nonterminal, body: Symbol*) {
     this(head, Arrays.asList(body:_*), null)
   }
 
   def this(head: Nonterminal, body: List[_ <: Symbol]) {
     this(head, body, null)
+  }
+
+  private def this(builder: Builder) {
+    this(builder.head, builder.body)
   }
 
   def size(): Int = body.size
@@ -78,11 +78,13 @@ class Rule(@BeanProperty val head: Nonterminal, body: List[_ <: Symbol], @BeanPr
     body.get(index)
   }
 
+  def getObject = `object`
+
   override def toString(): String = {
     val sb = new StringBuilder()
     sb.append(head).append(" ::= ")
     for (s <- body) {
-      sb.append(s).append(" ")
+      sb ++ s ++ " "
     }
     sb.toString
   }

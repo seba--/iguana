@@ -1,30 +1,19 @@
 package org.jgll_staged.grammar
 
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.Collection
-import java.util.List
 import org.jgll_staged.grammar.condition.Condition
+import java.util
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-abstract class AbstractSymbol(conditions: java.lang.Iterable[Condition]) extends Symbol {
+abstract class AbstractSymbol(_conditions: Seq[Condition]) extends Symbol {
 
-  protected val conditions = new ArrayList()
+  protected val conditions: Seq[Condition] = new util.ArrayList(_conditions)
 
-  for (condition <- conditions) {
-    this.conditions.add(condition)
-  }
-
-  def this() {
-    this()
-    this.conditions = new ArrayList()
-  }
-
-  override def getConditions(): Collection[Condition] = conditions
+  override def getConditions(): Seq[Condition] = conditions
 
   override def addCondition(condition: Condition): Symbol = {
-    addConditions(Arrays.asList(condition:_*))
+    addConditions(Seq(condition))
   }
 }
