@@ -523,7 +523,7 @@ class GrammarBuilder(var name: String) extends Serializable {
   private def doGroupPatterns[T <: AbstractPattern](patterns: java.lang.Iterable[T]): Map[T, Set[ListBuffer[Symbol]]] = {
     val group = new LinkedHashMap[T, Set[ListBuffer[Symbol]]]()
     for (pattern <- patterns) {
-      var set = group.get(pattern).get
+      var set = group.getOrElse(pattern, null)
       if (set == null) {
         set = new LinkedHashSet()
         group.put(pattern, set)
@@ -548,29 +548,28 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
     for ((key, value) <- patterns; alt <- head.getAlternates) {
       val pattern = key
-      if (!alt.`match`(pattern.getParent)) {
-        //continue
-      }
-      log.trace("Applying the pattern %s on %s.", pattern, alt)
-      if (!pattern.isDirect) {
-        var copy: HeadGrammarSlot = null
-        val alternates = ListBuffer[Alternate]()
-        if (pattern.isLeftMost) {
-          copy = copyIndirectAtLeft(alt.getNonterminalAt(pattern.getPosition), pattern.getNonterminal)
-          getLeftEnds(copy, pattern.getNonterminal, alternates)
-          for (a <- alternates) {
-            a.setNonterminalAt(0, freshNonterminals.get(pattern).get)
+      if (alt.`match`(pattern.getParent)) {
+        log.trace("Applying the pattern %s on %s.", pattern, alt)
+        if (!pattern.isDirect) {
+          var copy: HeadGrammarSlot = null
+          val alternates = ListBuffer[Alternate]()
+          if (pattern.isLeftMost) {
+            copy = copyIndirectAtLeft(alt.getNonterminalAt(pattern.getPosition), pattern.getNonterminal)
+            getLeftEnds(copy, pattern.getNonterminal, alternates)
+            for (a <- alternates) {
+              a.setNonterminalAt(0, freshNonterminals.get(pattern).get)
+            }
+          } else {
+            copy = copyIndirectAtRight(alt.getNonterminalAt(pattern.getPosition), pattern.getNonterminal)
+            getRightEnds(copy, pattern.getNonterminal, alternates)
+            for (a <- alternates) {
+              a.setNonterminalAt(a.size - 1, freshNonterminals.get(pattern).get)
+            }
           }
+          alt.setNonterminalAt(pattern.getPosition, copy)
         } else {
-          copy = copyIndirectAtRight(alt.getNonterminalAt(pattern.getPosition), pattern.getNonterminal)
-          getRightEnds(copy, pattern.getNonterminal, alternates)
-          for (a <- alternates) {
-            a.setNonterminalAt(a.size - 1, freshNonterminals.get(pattern).get)
-          }
+          alt.setNonterminalAt(pattern.getPosition, freshNonterminals.get(pattern).get)
         }
-        alt.setNonterminalAt(pattern.getPosition, copy)
-      } else {
-        alt.setNonterminalAt(pattern.getPosition, freshNonterminals.get(pattern).get)
       }
     }
     for ((key, value) <- freshNonterminals) {
@@ -626,14 +625,13 @@ class GrammarBuilder(var name: String) extends Serializable {
   private def rewriteRightEnds(nonterminal: HeadGrammarSlot, pattern: PrecedencePattern, children: Set[ListBuffer[Symbol]]) {
     if (nonterminal.getNonterminal == pattern.getNonterminal) {
       for (alternate <- nonterminal.getAlternates) {
-        if (!(alternate.getLastSlot.isInstanceOf[NonterminalGrammarSlot])) {
-          //continue
-        }
-        val last = alternate.getLastSlot.asInstanceOf[NonterminalGrammarSlot]
-          .getNonterminal
-        if (last.contains(children)) {
-          val newNonterminal = createNewNonterminal(alternate, alternate.size - 1, children)
-          rewriteRightEnds(newNonterminal, pattern, children)
+        if ((alternate.getLastSlot.isInstanceOf[NonterminalGrammarSlot])) {
+          val last = alternate.getLastSlot.asInstanceOf[NonterminalGrammarSlot]
+            .getNonterminal
+          if (last.contains(children)) {
+            val newNonterminal = createNewNonterminal(alternate, alternate.size - 1, children)
+            rewriteRightEnds(newNonterminal, pattern, children)
+          }
         }
       }
     } else {
@@ -649,14 +647,13 @@ class GrammarBuilder(var name: String) extends Serializable {
   private def rewriteLeftEnds(nonterminal: HeadGrammarSlot, pattern: PrecedencePattern, children: Set[ListBuffer[Symbol]]) {
     if (nonterminal.getNonterminal == pattern.getNonterminal) {
       for (alternate <- nonterminal.getAlternates) {
-        if (!(alternate.getFirstSlot.isInstanceOf[NonterminalGrammarSlot])) {
-          //continue
-        }
-        val first = alternate.getFirstSlot.asInstanceOf[NonterminalGrammarSlot]
-          .getNonterminal
-        if (first.contains(children)) {
-          val newNonterminal = createNewNonterminal(alternate, 0, children)
-          rewriteLeftEnds(newNonterminal, pattern, children)
+        if ((alternate.getFirstSlot.isInstanceOf[NonterminalGrammarSlot])) {
+          val first = alternate.getFirstSlot.asInstanceOf[NonterminalGrammarSlot]
+            .getNonterminal
+          if (first.contains(children)) {
+            val newNonterminal = createNewNonterminal(alternate, 0, children)
+            rewriteLeftEnds(newNonterminal, pattern, children)
+          }
         }
       }
     } else {
@@ -892,14 +889,14 @@ class GrammarBuilder(var name: String) extends Serializable {
     }
     while (!queue.isEmpty) {
       val head = queue.dequeue()
-      reachableNonterminals.add(head)
+      reachableNonterminals.+=(head)
       for (alternate <- head.getAlternates) {
         var currentSlot = alternate.getFirstSlot
         while (currentSlot.next() != null) {
           if (currentSlot.isInstanceOf[NonterminalGrammarSlot]) {
             val reachableHead = currentSlot.asInstanceOf[NonterminalGrammarSlot].getNonterminal
             if (!reachableNonterminals.contains(reachableHead)) {
-              queue.add(reachableHead)
+              queue += (reachableHead)
             }
           }
           currentSlot = currentSlot.next()
