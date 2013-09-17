@@ -71,6 +71,6 @@ class CuckooHashMap[K, V >: Null](decomposer: ExternalHasher[K], initialCapacity
 
     override def hash(t: MapEntry[K, V], f: HashFunction): Int = hasher.hash(t.k, f)
 
-    override def equals(e1: MapEntry[K, V], e2: MapEntry[K, V]): Boolean = hasher.==(e1.k, e2.k)
+    override def equals(e1: MapEntry[K, V], e2: MapEntry[K, V]): Boolean = hasher.equals(e1.k, e2.k)
   }
 }

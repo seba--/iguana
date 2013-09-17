@@ -66,6 +66,6 @@ class LevelMap[K <: Level, V >: Null](decomposer: ExternalHasher[K], initalCapac
 
     override def hash(e: MapEntry[K, V], f: HashFunction): Int = externalHasher.hash(e.k, f)
 
-    override def equals(e1: MapEntry[K, V], e2: MapEntry[K, V]): Boolean = externalHasher.==(e1.k, e2.k)
+    override def equals(e1: MapEntry[K, V], e2: MapEntry[K, V]): Boolean = externalHasher.equals(e1.k, e2.k)
   }
 }

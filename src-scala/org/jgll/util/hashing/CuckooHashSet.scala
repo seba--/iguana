@@ -81,12 +81,12 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
   def get(key: T): T = {
     var index = indexFor(externalHasher.hash(key, function1))
     var value = table1(index)
-    if (!isEntryEmpty(value) && externalHasher.==(key, value)) {
+    if (!isEntryEmpty(value) && externalHasher.equals(key, value)) {
       return value
     }
     index = indexFor(externalHasher.hash(key, function2))
     value = table2(index)
-    if (!isEntryEmpty(value) && externalHasher.==(key, value)) {
+    if (!isEntryEmpty(value) && externalHasher.equals(key, value)) {
       return value
     }
     null
@@ -259,13 +259,13 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
 
   def remove(key: T): Boolean = {
     var index = indexFor(externalHasher.hash(key, function1))
-    if (externalHasher.==(key, table1(index))) {
+    if (externalHasher.equals(key, table1(index))) {
       table1(index) = null
       _size -= 1
       return true
     }
     index = indexFor(externalHasher.hash(key, function2))
-    if (externalHasher.==(key, table2(index))) {
+    if (externalHasher.equals(key, table2(index))) {
       table2(index) = null
       _size -= 1
       return true

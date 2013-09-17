@@ -75,7 +75,7 @@ class PackedNode(private val slot: GrammarSlot, @BeanProperty val pivot: Int, @B
       return false
     }
     val other = obj.asInstanceOf[PackedNode]
-    externalHasher.==(this, other)
+    externalHasher.equals(this, other)
   }
 
   override def getGrammarSlot(): GrammarSlot = slot
