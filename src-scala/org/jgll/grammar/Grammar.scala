@@ -3,11 +3,6 @@ package org.jgll.grammar
 import java.io.IOException
 import java.io.Serializable
 import java.io.Writer
-import java.util.HashMap
-import java.util.HashSet
-import java.util.List
-import java.util.Map
-import java.util.Set
 import org.jgll.grammar.slot.BodyGrammarSlot
 import org.jgll.grammar.slot.HeadGrammarSlot
 import org.jgll.grammar.slot.KeywordGrammarSlot
@@ -19,6 +14,9 @@ import org.jgll.util.Input
 import org.jgll.util.logging.LoggerWrapper
 import Grammar._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -31,15 +29,15 @@ object Grammar {
 class Grammar(builder: GrammarBuilder) extends Serializable {
 
   @BeanProperty
-  var nonterminals: List[HeadGrammarSlot] = builder.nonterminals
+  var nonterminals: ListBuffer[HeadGrammarSlot] = builder.nonterminals
 
-  private var slots: List[BodyGrammarSlot] = builder.slots
+  private var slots: ListBuffer[BodyGrammarSlot] = builder.slots
 
   var nameToNonterminals: Map[Nonterminal, HeadGrammarSlot] = builder.nonterminalsMap
 
   private var nameToSlots: Map[String, BodyGrammarSlot] = new HashMap()
 
-  private var newNonterminalsMap: Map[Nonterminal, List[HeadGrammarSlot]] = builder.newNonterminalsMap
+  private var newNonterminalsMap: Map[Nonterminal, ListBuffer[HeadGrammarSlot]] = builder.newNonterminalsMap
 
   private var newNonterminals: Set[HeadGrammarSlot] = new HashSet()
 
@@ -124,10 +122,10 @@ class Grammar(builder: GrammarBuilder) extends Serializable {
 
   def getGrammarSlot(id: Int): BodyGrammarSlot = slots.get(id)
 
-  def getGrammarSlots(): List[BodyGrammarSlot] = slots
+  def getGrammarSlots(): ListBuffer[BodyGrammarSlot] = slots
 
   def getNonterminalByName(name: String): HeadGrammarSlot = {
-    nameToNonterminals.get(new Nonterminal(name))
+    nameToNonterminals.getOrElse(new Nonterminal(name), null)
   }
 
   def getNonterminalByNameAndIndex(name: String, index: Int): HeadGrammarSlot = {
@@ -137,12 +135,8 @@ class Grammar(builder: GrammarBuilder) extends Serializable {
   def isNewNonterminal(head: HeadGrammarSlot): Boolean = newNonterminals.contains(head)
 
   def getIndex(head: HeadGrammarSlot): Int = {
-    val list = newNonterminalsMap.get(head.getNonterminal)
-    if (list == null) {
-      return -1
-    }
-    newNonterminalsMap.get(head.getNonterminal).indexOf(head) + 
-      1
+    val list = newNonterminalsMap.getOrElse(head.getNonterminal, return -1)
+    list.indexOf(head) + 1
   }
 
   private def grammarSlotToString(slot: BodyGrammarSlot): String = {
@@ -178,7 +172,7 @@ class Grammar(builder: GrammarBuilder) extends Serializable {
     }
   }
 
-  def getGrammarSlotByName(name: String): BodyGrammarSlot = nameToSlots.get(name)
+  def getGrammarSlotByName(name: String): BodyGrammarSlot = nameToSlots.getOrElse(name, null)
 
   override def toString(): String = {
     val sb = new StringBuilder()
@@ -210,8 +204,8 @@ class Grammar(builder: GrammarBuilder) extends Serializable {
 
   def getNonterminalName(head: HeadGrammarSlot): String = {
     val name = head.getNonterminal.getName
-    if (newNonterminals.contains(head)) name + 
-      (newNonterminalsMap.get(head.getNonterminal).indexOf(head) + 
-      1) else name
+    if (newNonterminals.contains(head))
+      name + (newNonterminalsMap.get(head.getNonterminal).get.indexOf(head) + 1)
+    else name
   }
 }

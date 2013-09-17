@@ -2,11 +2,6 @@ package org.jgll.grammar.slot
 
 import java.io.IOException
 import java.io.Writer
-import java.util.ArrayList
-import java.util.HashSet
-import java.util.Iterator
-import java.util.List
-import java.util.Set
 import org.jgll.grammar.Alternate
 import org.jgll.grammar.Nonterminal
 import org.jgll.grammar.Symbol
@@ -15,13 +10,16 @@ import org.jgll.parser.GLLParserInternals
 import org.jgll.recognizer.GLLRecognizer
 import org.jgll.util.Input
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+
+import scala.collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
 class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends GrammarSlot {
 
-  private var alternates: List[Alternate] = new ArrayList()
+  private var alternates: ListBuffer[Alternate] = ListBuffer[Alternate]()
 
   @BooleanBeanProperty
   var nullable: Boolean = _
@@ -42,7 +40,7 @@ class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends Gramma
     alternates.add(alternate)
   }
 
-  def setAlternates(alternates: List[Alternate]) {
+  def setAlternates(alternates: ListBuffer[Alternate]) {
     this.alternates = alternates
   }
 
@@ -50,23 +48,23 @@ class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends Gramma
     alternates.remove(alternate)
   }
 
-  def without(list: List[Symbol]): Set[Alternate] = {
-    val set = new HashSet[Alternate](alternates)
+  def without(list: ListBuffer[Symbol]): Set[Alternate] = {
+    val set = new HashSet[Alternate]() ++= alternates
     for (alternate <- alternates if alternate.`match`(list)) {
       set.remove(alternate)
     }
     set
   }
 
-  def without(withoutSet: Set[List[Symbol]]): Set[Alternate] = {
-    val set = new HashSet[Alternate](alternates)
+  def without(withoutSet: Set[ListBuffer[Symbol]]): Set[Alternate] = {
+    val set = new HashSet[Alternate]() ++= alternates
     for (alternate <- alternates; list <- withoutSet if alternate.`match`(list)) {
       set.remove(alternate)
     }
     set
   }
 
-  def remove(list: List[Symbol]) {
+  def remove(list: ListBuffer[Symbol]) {
     val it = alternates.iterator()
     while (it.hasNext) {
       val alternate = it.next()
@@ -130,17 +128,17 @@ class HeadGrammarSlot(@BeanProperty val nonterminal: Nonterminal) extends Gramma
 
   def getAlternateAt(index: Int): Alternate = alternates.get(index)
 
-  def getAlternates(): List[Alternate] = new ArrayList(alternates)
+  def getAlternates(): ListBuffer[Alternate] = ListBuffer[Alternate]() ++= alternates
 
-  def getAlternatesAsSet(): Set[Alternate] = new HashSet(alternates)
+  def getAlternatesAsSet(): Set[Alternate] = new HashSet() ++= alternates
 
   def getCountAlternates(): Int = alternates.size
 
-  def contains(list: List[Symbol]): Boolean = {
+  def contains(list: ListBuffer[Symbol]): Boolean = {
     alternates.find(_.`match`(list)).isDefined
   }
 
-  def contains(set: Set[List[Symbol]]): Boolean = {
+  def contains(set: Set[ListBuffer[Symbol]]): Boolean = {
     set.find(contains(_)).isDefined
   }
 

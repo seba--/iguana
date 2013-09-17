@@ -4,6 +4,8 @@ import java.util.Arrays
 import java.util.HashSet
 import java.util.List
 import java.util.Set
+import scala.collection.mutable.ListBuffer
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -25,5 +27,5 @@ object CollectionsUtil {
     set
   }
 
-  def list[T](objects: T*): List[T] = Arrays.asList(objects:_*)
+  def list[T](objects: T*): ListBuffer[T] = ListBuffer[T]() ++= objects
 }

@@ -1,21 +1,22 @@
 package org.jgll.grammar
 
-import java.util.Arrays
-import java.util.List
 import org.jgll.grammar.condition.Condition
 import org.jgll.util.CollectionsUtil
 import Group._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 object Group {
 
-  def of[T <: Symbol](symbols: T*): Group = new Group(Arrays.asList(symbols:_*))
+  def of[T <: Symbol](symbols: T*): Group = new Group(ListBuffer() ++= symbols)
 }
 
 @SerialVersionUID(1L)
-class Group(@BeanProperty var symbols: List[_ <: Symbol]) extends Nonterminal("(" + CollectionsUtil.listToString(symbols) + ")", 
+class Group(@BeanProperty var symbols: ListBuffer[_ <: Symbol]) extends Nonterminal("(" + CollectionsUtil.listToString(symbols) + ")",
   false) {
 
   override def addCondition(condition: Condition): Group = {

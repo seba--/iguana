@@ -1,23 +1,24 @@
 package org.jgll.grammar.patterns
 
 import java.io.Serializable
-import java.util.ArrayList
-import java.util.List
 import org.jgll.grammar.Nonterminal
 import org.jgll.grammar.Symbol
 import org.jgll.parser.HashFunctions
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
 class AbstractPattern(nonteriminal: Nonterminal, 
-    _parent: List[Symbol],
+    _parent: ListBuffer[Symbol],
     protected val position: Int, 
-    _child: List[Symbol]) extends Serializable {
+    _child: ListBuffer[Symbol]) extends Serializable {
 
-  protected val parent = new ArrayList(_parent)
+  protected val parent = ListBuffer[Symbol]() ++ _parent
 
-  protected val child = new ArrayList(_child)
+  protected val child = ListBuffer[Symbol]() ++ _child
 
   protected val nonterminal = nonteriminal
 
@@ -27,9 +28,9 @@ class AbstractPattern(nonteriminal: Nonterminal,
 
   def getPosition(): Int = position
 
-  def getParent(): List[Symbol] = parent
+  def getParent(): ListBuffer[Symbol] = parent
 
-  def getChild(): List[Symbol] = child
+  def getChild(): ListBuffer[Symbol] = child
 
   def getNonterminal(): Nonterminal = nonterminal
 

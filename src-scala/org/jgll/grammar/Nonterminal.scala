@@ -1,8 +1,10 @@
 package org.jgll.grammar
 
-import java.util.Collection
 import org.jgll.grammar.condition.Condition
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 

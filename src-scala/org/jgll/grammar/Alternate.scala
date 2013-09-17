@@ -1,10 +1,6 @@
 package org.jgll.grammar
 
 import java.io.Serializable
-import java.util.ArrayList
-import java.util.Iterator
-import java.util.List
-import java.util.Set
 import org.jgll.grammar.slot.BodyGrammarSlot
 import org.jgll.grammar.slot.EpsilonGrammarSlot
 import org.jgll.grammar.slot.HeadGrammarSlot
@@ -15,13 +11,15 @@ import org.jgll.grammar.slot.TerminalGrammarSlot
 import org.jgll.util.hashing.HashFunctionBuilder
 import org.jgll.util.hashing.hashfunction.MurmurHash3
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
 class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializable {
 
-  private val symbols = new ArrayList[BodyGrammarSlot]()
+  private val symbols = ListBuffer[BodyGrammarSlot]()
 
   @BeanProperty
   var condition: BodyGrammarSlot = _
@@ -33,11 +31,11 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
   var current = firstSlot
 
   if (firstSlot.isInstanceOf[LastGrammarSlot]) {
-    symbols.add(firstSlot)
+    symbols += firstSlot
   }
 
   while (!(current.isInstanceOf[LastGrammarSlot])) {
-    symbols.add(current)
+    symbols += current
     current = current.next()
   }
 
@@ -125,7 +123,7 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
     head.getNonterminal == lastNonterminal.getNonterminal.getNonterminal
   }
 
-  def `match`(list: List[Symbol]): Boolean = {
+  def `match`(list: ListBuffer[Symbol]): Boolean = {
     if (list.size != symbols.size) {
       return false
     }
@@ -135,7 +133,7 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
     true
   }
 
-  def `match`(set: Set[List[Symbol]]): Boolean = {
+  def `match`(set: Set[ListBuffer[Symbol]]): Boolean = {
     set.find(`match`(_)).isDefined
   }
 
@@ -184,8 +182,8 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
     true
   }
 
-  def getSymbols(): java.lang.Iterable[Symbol] = {
-    new java.lang.Iterable[Symbol]() {
+  def getSymbols(): Iterable[Symbol] = {
+    new Iterable[Symbol]() {
 
       override def iterator(): Iterator[Symbol] = {
         new Iterator[Symbol]() {
@@ -200,7 +198,7 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
             s
           }
 
-          override def remove() {
+          def remove() {
             throw new UnsupportedOperationException()
           }
         }

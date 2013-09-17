@@ -1,7 +1,6 @@
 package org.jgll.grammar
 
 import java.util.Arrays
-import java.util.Collection
 import org.jgll.grammar.condition.Condition
 import org.jgll.parser.HashFunctions
 import org.jgll.util.Input
@@ -9,6 +8,9 @@ import org.jgll.util.hashing.ExternalHasher
 import org.jgll.util.hashing.hashfunction.HashFunction
 import Keyword._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -30,6 +32,10 @@ class Keyword(@BeanProperty val name: String, val chars: Array[Int]) extends Abs
 
   def this(name: String, s: String) {
     this(name, Input.toIntArray(s))
+  }
+
+  def this(name: String, chars: Array[Char]) {
+    this(name, chars map (_.toInt))
   }
 
   def size(): Int = chars.length

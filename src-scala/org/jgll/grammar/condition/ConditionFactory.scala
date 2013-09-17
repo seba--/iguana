@@ -19,6 +19,10 @@ object ConditionFactory {
     createCondition(ConditionType.NOT_FOLLOW, symbols)
   }
 
+  def notFollow[T <: Symbol](symbols: T*): Condition = {
+    createCondition(ConditionType.NOT_FOLLOW, List() ++ symbols)
+  }
+
   def precede[T <: Symbol](symbols: List[T]): Condition = {
     createCondition(ConditionType.PRECEDE, symbols)
   }
@@ -33,6 +37,10 @@ object ConditionFactory {
 
   def notMatch[T <: Symbol](symbols: List[T]): Condition = {
     createCondition(ConditionType.NOT_MATCH, symbols)
+  }
+
+  def notMatch[T <: Symbol](symbols: T*): Condition = {
+    createCondition(ConditionType.NOT_MATCH, List() ++ symbols)
   }
 
   private def allTerminal[T <: Symbol](symbols: List[T]): Boolean = {

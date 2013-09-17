@@ -14,7 +14,7 @@ class Trie[T] {
     add(root, label, null)
   }
 
-  def get(prefix: java.lang.Iterable[T]): Node[T] = {
+  def get(prefix: Iterable[T]): Node[T] = {
     var node = root
     for (label <- prefix) {
       node = getNodeWithEdgeLabel(node, label)
@@ -42,15 +42,13 @@ class Trie[T] {
       .getOrElse(null)
   }
 
-  def add(labels: java.lang.Iterable[T]) {
+  def add(labels: Iterable[T]) {
     add(labels, null)
   }
 
-  def add(labels: java.lang.Iterable[T], `object`: AnyRef) {
+  def add(labels: Iterable[T], `object`: AnyRef) {
     var node = root
-    val it = labels.iterator()
-    while (it.hasNext) {
-      val label = it.next()
+    for (label <- labels) {
       node = add(node, label, `object`)
     }
   }

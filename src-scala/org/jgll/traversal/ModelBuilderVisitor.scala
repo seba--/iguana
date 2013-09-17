@@ -48,9 +48,9 @@ class ModelBuilderVisitor[T, U](private var input: Input, private var listener: 
         val list = new ArrayList[U]()
         val i = nonterminalSymbolNode.getLeftExtent
         while (!(currentSlot.isInstanceOf[LastGrammarSlot])) {
-          val terminal = currentSlot.asInstanceOf[TerminalGrammarSlot].getTerminal.asInstanceOf[CharacterClass]
-          assert(terminal.getRanges.size == 1)
-          val result = listener.terminal(terminal.getRanges.get(0).getStart, input.getPositionInfo(i, 
+          val terminal: CharacterClass = currentSlot.asInstanceOf[TerminalGrammarSlot].getTerminal.asInstanceOf[CharacterClass]
+          assert(terminal.ranges.size == 1)
+          val result = listener.terminal(terminal.ranges.get(0).getStart, input.getPositionInfo(i,
             i))
           list.add(result.getObj)
           currentSlot = currentSlot.next()

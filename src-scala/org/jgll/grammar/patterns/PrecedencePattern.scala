@@ -1,17 +1,19 @@
 package org.jgll.grammar.patterns
 
 import java.io.Serializable
-import java.util.List
 import org.jgll.grammar.Nonterminal
 import org.jgll.grammar.Symbol
+
+import collection.mutable._
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
 class PrecedencePattern(nonteriminal: Nonterminal, 
-    parent: List[Symbol], 
+    parent: ListBuffer[Symbol],
     position: Int, 
-    child: List[Symbol]) extends AbstractPattern(nonteriminal, parent, position, child) with Serializable {
+    child: ListBuffer[Symbol]) extends AbstractPattern(nonteriminal, parent, position, child) with Serializable {
 
   def isDirect(): Boolean = nonterminal == parent.get(position)
 

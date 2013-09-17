@@ -38,7 +38,7 @@ class GSSNode(private val slot: GrammarSlot, @BeanProperty val inputIndex: Int)
   val children = new CuckooHashSet(new GSSNodeExternalHasher())
 
   @BeanProperty
-  val poppedIndices = new CuckooHashSet(IntegerExternalHasher.getInstance)
+  val poppedIndices = new CuckooHashSet[Integer](IntegerExternalHasher.getInstance)
 
   def hasChild(child: GSSNode): Boolean = children.contains(child)
 

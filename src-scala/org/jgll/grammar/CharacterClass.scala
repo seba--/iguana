@@ -1,19 +1,14 @@
 package org.jgll.grammar
 
 import java.util.BitSet
-import java.util.Collection
-import java.util.Collections
-import java.util.List
 import org.jgll.grammar.condition.Condition
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+import collection.mutable._
 //remove if not needed
 import scala.collection.JavaConversions._
 
 @SerialVersionUID(1L)
-class CharacterClass(_ranges: List[Range]) extends AbstractSymbol with Terminal {
-
-  @BeanProperty
-  val ranges = Collections.unmodifiableList(_ranges)
+class CharacterClass(@BeanProperty val ranges: List[Range]) extends AbstractSymbol with Terminal {
 
   private var testSet: BitSet = new BitSet()
 

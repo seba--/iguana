@@ -1,13 +1,12 @@
 package org.jgll.grammar
 
 import java.io.Serializable
-import java.util.ArrayList
-import java.util.Arrays
-import java.util.List
 import org.jgll.grammar.condition.Condition
 import org.jgll.parser.HashFunctions
 import Rule._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
+import scala.collection.mutable.ListBuffer
+
 //remove if not needed
 import scala.collection.JavaConversions._
 
@@ -15,10 +14,10 @@ object Rule {
 
   class Builder(var head: Nonterminal) {
 
-    var body: List[Symbol] = new ArrayList()
+    var body: ListBuffer[Symbol] = ListBuffer()
 
     def addSymbol(symbol: Symbol): Builder = {
-      body.add(symbol)
+      body += symbol
       this
     }
 
@@ -27,14 +26,24 @@ object Rule {
 }
 
 @SerialVersionUID(1L)
-class Rule(@BeanProperty val head: Nonterminal, _body: List[_ <: Symbol], @BeanProperty val `object`: AnyRef)
+class Rule(@BeanProperty val head: Nonterminal,
+           _body: ListBuffer[_ <: Symbol] = ListBuffer[Symbol](),
+           @BeanProperty val obj: AnyRef = null)
     extends Serializable {
 
   @BeanProperty
-  val body: List[Symbol] = new ArrayList(_body)
+  val body: ListBuffer[Symbol] = ListBuffer() ++ _body
 
   @BeanProperty
-  var conditions: List[Condition] = new ArrayList()
+  var conditions: ListBuffer[Condition] = ListBuffer()
+
+  def this(head: Nonterminal, s: Symbol) {
+    this(head, ListBuffer(s))
+  }
+
+  def this(head: Nonterminal, s: Symbol, obj: AnyRef) {
+    this(head, ListBuffer(s), obj)
+  }
 
   if (head == null) {
     throw new IllegalArgumentException("head cannot be null.")
@@ -48,18 +57,6 @@ class Rule(@BeanProperty val head: Nonterminal, _body: List[_ <: Symbol], @BeanP
     throw new IllegalArgumentException("Body of a rule cannot have null symbols.")
   }
 
-  def this(head: Nonterminal) {
-    this(head, new ArrayList[Symbol](), null)
-  }
-
-  def this(head: Nonterminal, body: Symbol*) {
-    this(head, Arrays.asList(body:_*), null)
-  }
-
-  def this(head: Nonterminal, body: List[_ <: Symbol]) {
-    this(head, body, null)
-  }
-
   private def this(builder: Builder) {
     this(builder.head, builder.body)
   }
@@ -67,7 +64,7 @@ class Rule(@BeanProperty val head: Nonterminal, _body: List[_ <: Symbol], @BeanP
   def size(): Int = body.size
 
   def addCondition(condition: Condition): Rule = {
-    conditions.add(condition)
+    conditions += condition
     this
   }
 
