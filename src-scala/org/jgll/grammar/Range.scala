@@ -34,9 +34,6 @@ class Range(@BeanProperty val start: Int, @BeanProperty val end: Int) extends Ab
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Range])) {
       return false
     }

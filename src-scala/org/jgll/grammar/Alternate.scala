@@ -160,9 +160,6 @@ class Alternate(@BeanProperty val firstSlot: BodyGrammarSlot) extends Serializab
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Alternate])) {
       return false
     }

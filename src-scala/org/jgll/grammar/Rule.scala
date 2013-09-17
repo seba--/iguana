@@ -85,9 +85,6 @@ class Rule(@BeanProperty val head: Nonterminal,
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Rule])) {
       return false
     }

@@ -22,9 +22,6 @@ class Character(private val c: Int) extends AbstractSymbol with Terminal {
   override def hashCode(): Int = c
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Character])) {
       return false
     }

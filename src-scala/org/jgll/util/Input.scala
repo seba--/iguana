@@ -77,9 +77,6 @@ object Input {
     }
 
     override def equals(obj: Any): Boolean = {
-      if (this == obj) {
-        return true
-      }
       if (!(obj.isInstanceOf[LineColumn])) {
         return false
       }
@@ -173,9 +170,6 @@ class Input private (private var input: Array[Int]) {
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Input])) {
       return false
     }

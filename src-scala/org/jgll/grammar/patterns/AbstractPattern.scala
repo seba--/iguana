@@ -41,9 +41,6 @@ class AbstractPattern(nonteriminal: Nonterminal,
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[AbstractPattern])) {
       return false
     }

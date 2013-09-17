@@ -77,9 +77,6 @@ abstract class NonPackedNode(protected val slot: GrammarSlot, protected val left
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[NonPackedNode])) {
       return false
     }

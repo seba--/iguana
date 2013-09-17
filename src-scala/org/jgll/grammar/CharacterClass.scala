@@ -35,9 +35,6 @@ class CharacterClass(@BeanProperty val ranges: List[Range]) extends AbstractSymb
   override def hashCode(): Int = ranges.hashCode
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[CharacterClass])) {
       return false
     }

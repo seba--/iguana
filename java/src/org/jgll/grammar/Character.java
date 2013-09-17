@@ -46,9 +46,6 @@ public class Character extends AbstractSymbol implements Terminal {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
 		if (!(obj instanceof Character)) {
 			return false;
 		}

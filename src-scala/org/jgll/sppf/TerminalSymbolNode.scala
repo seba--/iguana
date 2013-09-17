@@ -32,9 +32,6 @@ class TerminalSymbolNode(@BeanProperty val matchedChar: Int, private val inputIn
     extends SPPFNode {
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[TerminalSymbolNode])) {
       return false
     }

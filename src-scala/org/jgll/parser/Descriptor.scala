@@ -72,9 +72,6 @@ class Descriptor(private val slot: GrammarSlot,
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Descriptor])) {
       return false
     }

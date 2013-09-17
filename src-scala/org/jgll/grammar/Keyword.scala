@@ -45,9 +45,6 @@ class Keyword(@BeanProperty val name: String, val chars: Array[Int]) extends Abs
   override def toString(): String = getName
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Keyword])) {
       return false
     }

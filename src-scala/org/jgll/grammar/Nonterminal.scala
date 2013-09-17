@@ -38,9 +38,6 @@ class Nonterminal(@BeanProperty val name: String,
   override def toString(): String = name
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[Nonterminal])) {
       return false
     }

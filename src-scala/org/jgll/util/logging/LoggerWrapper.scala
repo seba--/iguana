@@ -30,31 +30,31 @@ class LoggerWrapper private (private var logger: Logger) {
 
   def info(s: String, args: Any*) {
     if (logger.isLoggable(Level.INFO)) {
-      logger.info(String.format(s, args))
+      logger.info(s.format(args: _*))
     }
   }
 
   def warning(s: String, args: Any*) {
     if (logger.isLoggable(Level.WARNING)) {
-      logger.warning(String.format(s, args))
+      logger.warning(s.format(args: _*))
     }
   }
 
   def error(s: String, args: Any*) {
     if (logger.isLoggable(Level.SEVERE)) {
-      logger.severe(String.format(s, args))
+      logger.severe(s.format(args: _*))
     }
   }
 
   def debug(s: String, args: Any*) {
     if (logger.isLoggable(Level.FINE)) {
-      logger.fine(String.format(s, args))
+      logger.fine(s.format(args: _*))
     }
   }
 
   def trace(s: String, args: Any*) {
     if (logger.isLoggable(Level.FINEST)) {
-      logger.finest(String.format(s, args))
+      logger.finest(s.format(args: _*))
     }
   }
 }

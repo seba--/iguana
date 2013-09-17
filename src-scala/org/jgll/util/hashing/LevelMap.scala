@@ -20,9 +20,6 @@ object LevelMap {
     }
 
     override def equals(obj: Any): Boolean = {
-      if (this == obj) {
-        return true
-      }
       if (!(obj.isInstanceOf[MapEntry[K,V]])) {
         return false
       }

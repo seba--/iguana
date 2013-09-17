@@ -14,9 +14,6 @@ class KeyValue[K, V](@BeanProperty val key: K, @BeanProperty var vvalue: V) exte
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[KeyValue[K,V]])) {
       return false
     }

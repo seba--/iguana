@@ -57,9 +57,6 @@ class GSSNode(private val slot: GrammarSlot, @BeanProperty val inputIndex: Int)
   def getGrammarSlot(): GrammarSlot = slot
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[GSSNode])) {
       return false
     }

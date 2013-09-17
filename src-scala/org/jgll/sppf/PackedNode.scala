@@ -68,9 +68,6 @@ class PackedNode(private val slot: GrammarSlot, @BeanProperty val pivot: Int, @B
   }
 
   override def equals(obj: Any): Boolean = {
-    if (this == obj) {
-      return true
-    }
     if (!(obj.isInstanceOf[PackedNode])) {
       return false
     }
