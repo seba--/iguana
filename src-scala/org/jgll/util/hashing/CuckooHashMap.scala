@@ -39,7 +39,7 @@ class CuckooHashMap[K, V >: Null](decomposer: ExternalHasher[K], initialCapacity
                                  (implicit val kmanifest: Manifest[K], implicit val vmanifest: Manifest[V])
   extends Serializable {
 
-  private var set: CuckooHashSet[MapEntry[K, V]] = new CuckooHashSet(new MapEntryExternalHasher(decomposer))
+  private var set: CuckooHashSet[MapEntry[K, V]] = new CuckooHashSet(initialCapacity, new MapEntryExternalHasher(decomposer))
 
   def get(key: K): V = {
     val entry = set.get(new MapEntry[K, V](key, null))

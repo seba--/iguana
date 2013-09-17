@@ -32,6 +32,11 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
     extends Serializable with java.lang.Iterable[T] {
 
   private var capacity: Int = 1
+  while (capacity < initialCapacity) {
+    capacity *= 2
+  }
+
+  protected var tableSize: Int = capacity / 2
 
   protected var _size: Int = _
 
@@ -49,16 +54,11 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
 
   protected var table2: Array[T] = new Array[T](tableSize)
 
-  protected var tableSize: Int = capacity / 2
 
   private var externalHasher: ExternalHasher[T] = decomposer
 
   if (initialCapacity < 8) {
     initialCapacity = 8
-  }
-
-  while (capacity < initialCapacity) {
-    capacity *= 2
   }
 
   generateNewHashFunctions()
@@ -216,7 +216,11 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
 
   def getEnlargeCount(): Int = enlargeCount
 
-  protected def indexFor(hash: Int): Int = hash & (tableSize - 1)
+  protected def indexFor(hash: Int): Int = {
+    val s = (tableSize - 1)
+    val r = hash & s
+    r
+  }
 
   def isEmpty(): Boolean = _size == 0
 
