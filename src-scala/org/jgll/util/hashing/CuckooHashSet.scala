@@ -31,6 +31,10 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
                               (implicit val manifest: Manifest[T])
     extends Serializable with java.lang.Iterable[T] {
 
+  if (initialCapacity < 8) {
+    initialCapacity = 8
+  }
+
   private var capacity: Int = 1
   while (capacity < initialCapacity) {
     capacity *= 2
@@ -54,12 +58,7 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
 
   protected var table2: Array[T] = new Array[T](tableSize)
 
-
   private var externalHasher: ExternalHasher[T] = decomposer
-
-  if (initialCapacity < 8) {
-    initialCapacity = 8
-  }
 
   generateNewHashFunctions()
 
