@@ -53,14 +53,16 @@ class Gamma0Test {
 
   @Test
   def testFirstSets() {
-    assertEquals(set(new Character('a'), Epsilon.getInstance), grammar.getNonterminalByName("S").getFirstSet)
+    val s1 = set(new Character('a'), Epsilon)
+    val s2 = grammar.getNonterminalByName("S").getFirstSet
+    assertEquals(s1, s2)
     assertEquals(set(new Character('a')), grammar.getNonterminalByName("A").getFirstSet)
   }
 
   @Test
   def testFollowSets() {
-    assertEquals(set(new Character('a'), new Character('d'), EOF.getInstance), grammar.getNonterminalByName("A").getFollowSet)
-    assertEquals(set(new Character('d'), EOF.getInstance), grammar.getNonterminalByName("S").getFollowSet)
+    assertEquals(set(new Character('a'), new Character('d'), EOF), grammar.getNonterminalByName("A").getFollowSet)
+    assertEquals(set(new Character('d'), EOF), grammar.getNonterminalByName("S").getFollowSet)
   }
 
   @Test

@@ -67,7 +67,6 @@ abstract class SPPFNode extends Level {
       while (otherIt.hasNext) {
         val otherChild = otherIt.next()
         if (thisChild.deepEquals(otherChild)) {
-          // continue outer
           return true
         }
       }

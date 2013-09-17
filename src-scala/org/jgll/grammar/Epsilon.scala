@@ -10,16 +10,9 @@ import collection.mutable._
 //remove if not needed
 import scala.collection.JavaConversions._
 
-object Epsilon {
-
-  private val EPSILON = "epsilon"
-
-  @BeanProperty
-  lazy val instance = new Epsilon()
-}
-
 @SerialVersionUID(1L)
-class Epsilon extends Terminal {
+object Epsilon extends Terminal {
+  val EPSILON = "epsilon"
 
   override def `match`(i: Int): Boolean = true
 

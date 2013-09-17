@@ -45,7 +45,7 @@ class PrecedeRestrictionTest2 {
     val builder = new GrammarBuilder()
     val r1 = new Rule(S, ListBuffer(forr, new Opt(L), Id))
     val r2 = new Rule(S, forall)
-    val r3 = new Rule(Id, new Plus(az).addCondition(notFollow(az)).addCondition(notPrecede(List(forr))))
+    val r3 = new Rule(Id, new Plus(az).addCondition(notFollow(az)).addCondition(notPrecede(ListBuffer(forr))))
     val r4 = new Rule(L, ws)
     val rules = EBNFUtil.rewrite(list(r1, r2, r3, r4))
     builder.addRules(rules)

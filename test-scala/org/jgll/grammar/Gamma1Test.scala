@@ -74,15 +74,15 @@ class Gamma1Test {
 
   @Test
   def testFirstSets() {
-    assertEquals(set(a, b, c, Epsilon.getInstance), grammar.getNonterminalByName("S").getFirstSet)
+    assertEquals(set(a, b, c, Epsilon), grammar.getNonterminalByName("S").getFirstSet)
     assertEquals(set(a, c), grammar.getNonterminalByName("A").getFirstSet)
     assertEquals(set(a, b), grammar.getNonterminalByName("B").getFirstSet)
   }
 
   @Test
   def testFollowSets() {
-    assertEquals(set(a, b, c, d, EOF.getInstance), grammar.getNonterminalByName("A").getFollowSet)
-    assertEquals(set(d, EOF.getInstance), grammar.getNonterminalByName("S").getFollowSet)
+    assertEquals(set(a, b, c, d, EOF), grammar.getNonterminalByName("A").getFollowSet)
+    assertEquals(set(d, EOF), grammar.getNonterminalByName("S").getFollowSet)
   }
 
   @Test

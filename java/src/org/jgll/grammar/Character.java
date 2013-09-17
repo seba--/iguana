@@ -1,8 +1,5 @@
 package org.jgll.grammar;
 
-import java.util.BitSet;
-import java.util.Collection;
-
 import org.jgll.grammar.condition.Condition;
 
 /**

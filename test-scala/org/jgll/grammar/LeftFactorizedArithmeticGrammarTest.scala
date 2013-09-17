@@ -41,18 +41,18 @@ class LeftFactorizedArithmeticGrammarTest {
   @Test
   def testFirstSets() {
     assertEquals(set(new Character('('), new Character('a')), grammar.getNonterminalByName("E").getFirstSet)
-    assertEquals(set(new Character('+'), Epsilon.getInstance), grammar.getNonterminalByName("E1").getFirstSet)
-    assertEquals(set(new Character('*'), Epsilon.getInstance), grammar.getNonterminalByName("T1").getFirstSet)
+    assertEquals(set(new Character('+'), Epsilon), grammar.getNonterminalByName("E1").getFirstSet)
+    assertEquals(set(new Character('*'), Epsilon), grammar.getNonterminalByName("T1").getFirstSet)
     assertEquals(set(new Character('('), new Character('a')), grammar.getNonterminalByName("T").getFirstSet)
     assertEquals(set(new Character('('), new Character('a')), grammar.getNonterminalByName("F").getFirstSet)
   }
 
   def testFollowSets() {
-    assertEquals(set(new Character(')'), EOF.getInstance), grammar.getNonterminalByName("E").getFollowSet)
-    assertEquals(set(new Character(')'), EOF.getInstance), grammar.getNonterminalByName("E1").getFollowSet)
-    assertEquals(set(new Character('+'), new Character(')'), EOF.getInstance), grammar.getNonterminalByName("T1").getFollowSet)
-    assertEquals(set(new Character('+'), new Character(')'), EOF.getInstance), grammar.getNonterminalByName("T").getFollowSet)
+    assertEquals(set(new Character(')'), EOF), grammar.getNonterminalByName("E").getFollowSet)
+    assertEquals(set(new Character(')'), EOF), grammar.getNonterminalByName("E1").getFollowSet)
+    assertEquals(set(new Character('+'), new Character(')'), EOF), grammar.getNonterminalByName("T1").getFollowSet)
+    assertEquals(set(new Character('+'), new Character(')'), EOF), grammar.getNonterminalByName("T").getFollowSet)
     assertEquals(set(new Character('+'), new Character('*'), new Character(')'),
-      EOF.getInstance), grammar.getNonterminalByName("F").getFollowSet)
+      EOF), grammar.getNonterminalByName("F").getFollowSet)
   }
 }

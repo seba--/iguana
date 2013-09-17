@@ -190,7 +190,7 @@ class GrammarBuilder(var name: String) extends Serializable {
   }
 
   private def addCondition(slot: BodyGrammarSlot, condition: Condition) = condition.getType match {
-    case FOLLOW => //break
+    case FOLLOW =>
     case NOT_FOLLOW => if (condition.isInstanceOf[TerminalCondition]) {
       NotFollowActions.fromTerminalList(slot.next(), condition.asInstanceOf[TerminalCondition].getTerminals)
     } else if (condition.isInstanceOf[KeywordCondition]) {
@@ -198,7 +198,7 @@ class GrammarBuilder(var name: String) extends Serializable {
     } else {
       NotFollowActions.fromGrammarSlot(slot.next(), convertCondition(condition.asInstanceOf[ContextFreeCondition]))
     }
-    case PRECEDE => //break
+    case PRECEDE =>
     case NOT_PRECEDE => 
       assert(!(condition.isInstanceOf[ContextFreeCondition]))
       if (condition.isInstanceOf[KeywordCondition]) {
@@ -209,7 +209,7 @@ class GrammarBuilder(var name: String) extends Serializable {
         NotPrecedeActions.fromTerminalList(slot, terminalCondition.getTerminals)
       }
 
-    case MATCH => //break
+    case MATCH =>
     case NOT_MATCH => if (condition.isInstanceOf[ContextFreeCondition]) {
       NotMatchActions.fromGrammarSlot(slot.next(), convertCondition(condition.asInstanceOf[ContextFreeCondition]))
     } else {
@@ -353,9 +353,9 @@ class GrammarBuilder(var name: String) extends Serializable {
   private def addFirstSet(set: Set[Terminal], currentSlot: BodyGrammarSlot, _changed: Boolean): Boolean = {
     var changed = _changed
     if (currentSlot.isInstanceOf[EpsilonGrammarSlot]) {
-      set.add(Epsilon.getInstance) || changed
+      set.add(Epsilon) || changed
     } else if (currentSlot.isInstanceOf[TerminalGrammarSlot]) {
-      set.add(currentSlot.asInstanceOf[TerminalGrammarSlot].getTerminal) || 
+      set.add(currentSlot.asInstanceOf[TerminalGrammarSlot].getTerminal) ||
         changed
     } else if (currentSlot.isInstanceOf[KeywordGrammarSlot]) {
       set.add(currentSlot.asInstanceOf[KeywordGrammarSlot].getKeyword
@@ -375,7 +375,7 @@ class GrammarBuilder(var name: String) extends Serializable {
   }
 
   private def isNullable(nt: HeadGrammarSlot): Boolean = {
-    nt.getFirstSet.contains(Epsilon.getInstance)
+    nt.getFirstSet.contains(Epsilon)
   }
 
   private def isChainNullable(slot: BodyGrammarSlot): Boolean = {
@@ -395,40 +395,46 @@ class GrammarBuilder(var name: String) extends Serializable {
       changed = false
       for (head <- nonterminals; alternate <- head.getAlternates) {
         var currentSlot = alternate.getFirstSlot
-        while (!(currentSlot.isInstanceOf[LastGrammarSlot])) {
-          if (currentSlot.isInstanceOf[NonterminalGrammarSlot]) {
-            val nonterminalGrammarSlot = currentSlot.asInstanceOf[NonterminalGrammarSlot]
-            val next = currentSlot.next()
-            if (next.isInstanceOf[LastGrammarSlot]) {
-              changed |= nonterminalGrammarSlot.getNonterminal.getFollowSet.addAll(head.getFollowSet)
-              //break
+        def loop() {
+          while (!(currentSlot.isInstanceOf[LastGrammarSlot])) {
+            if (currentSlot.isInstanceOf[NonterminalGrammarSlot]) {
+              val nonterminalGrammarSlot = currentSlot.asInstanceOf[NonterminalGrammarSlot]
+              val next = currentSlot.next()
+              if (next.isInstanceOf[LastGrammarSlot]) {
+                changed |= nonterminalGrammarSlot.getNonterminal.getFollowSet.addAll(head.getFollowSet)
+                return
+              }
+              val followSet = nonterminalGrammarSlot.getNonterminal.getFollowSet
+              changed |= addFirstSet(followSet, currentSlot.next(), changed)
+              if (isChainNullable(next)) {
+                changed |= nonterminalGrammarSlot.getNonterminal.getFollowSet.addAll(head.getFollowSet)
+              }
             }
-            val followSet = nonterminalGrammarSlot.getNonterminal.getFollowSet
-            changed |= addFirstSet(followSet, currentSlot.next(), changed)
-            if (isChainNullable(next)) {
-              changed |= nonterminalGrammarSlot.getNonterminal.getFollowSet.addAll(head.getFollowSet)
-            }
+            currentSlot = currentSlot.next()
           }
-          currentSlot = currentSlot.next()
         }
+        loop()
       }
     }
     for (head <- nonterminals) {
-      head.followSet - (Epsilon.getInstance)
-      head.followSet + (EOF.getInstance)
+      head.followSet -= (Epsilon)
+      head.followSet += (EOF)
     }
   }
 
   private def setTestSets() {
     for (head <- nonterminals) {
-      val nullable = head.getFirstSet.contains(Epsilon.getInstance)
+      val nullable = head.getFirstSet.contains(Epsilon)
       var directNullable = false
       if (nullable) {
-        for (alt <- head.getAlternates if alt.isEmpty) {
-          directNullable = true
-          head.setEpsilonAlternate(alt)
-          //break
+        def loop() {
+          for (alt <- head.getAlternates if alt.isEmpty) {
+            directNullable = true
+            head.setEpsilonAlternate(alt)
+            return
+          }
         }
+        loop()
       }
       head.setNullable(nullable, directNullable)
       for (alternate <- head.getAlternates) {

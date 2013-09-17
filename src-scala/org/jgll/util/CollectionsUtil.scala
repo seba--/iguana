@@ -1,17 +1,13 @@
 package org.jgll.util
 
-import java.util.Arrays
-import java.util.HashSet
-import java.util.List
-import java.util.Set
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable._
 
 //remove if not needed
 import scala.collection.JavaConversions._
 
 object CollectionsUtil {
 
-  def listToString[T](elements: List[T]): String = {
+  def listToString[T](elements: Seq[T]): String = {
     val sb = new StringBuilder()
     for (t <- elements) {
       sb.append(t.toString).append(" ")
