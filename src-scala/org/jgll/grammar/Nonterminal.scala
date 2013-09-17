@@ -3,7 +3,7 @@ package org.jgll.grammar
 import org.jgll.grammar.condition.Condition
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 
-import collection.mutable._
+import scala.collection.mutable._
 
 //remove if not needed
 import scala.collection.JavaConversions._
@@ -11,7 +11,7 @@ import scala.collection.JavaConversions._
 @SerialVersionUID(1L)
 class Nonterminal(@BeanProperty val name: String,
                   private val ebnfList: Boolean = false,
-                  conditions: Seq[Condition] = Seq())
+                  conditions: ListBuffer[Condition] = ListBuffer())
     extends AbstractSymbol(conditions) {
 
   @BooleanBeanProperty
@@ -28,10 +28,10 @@ class Nonterminal(@BeanProperty val name: String,
     false
   }
 
-  override def addConditions(conditions: Seq[Condition]): Symbol = {
+  override def addConditions(conditions: ListBuffer[Condition]): Symbol = {
     val nonterminal = new Nonterminal(this.name)
-    nonterminal.conditions.addAll(this.conditions)
-    nonterminal.conditions.addAll(conditions)
+    nonterminal.conditions ++= this.conditions
+    nonterminal.conditions ++= conditions
     nonterminal
   }
 

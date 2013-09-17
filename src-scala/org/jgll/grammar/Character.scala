@@ -40,10 +40,10 @@ class Character(private val c: Int) extends AbstractSymbol with Terminal {
     set
   }
 
-  override def addConditions(conditions: Seq[Condition]): Terminal = {
+  override def addConditions(conditions: ListBuffer[Condition]): Terminal = {
     val terminal = new Character(this.c)
-    terminal.conditions.addAll(this.conditions)
-    terminal.conditions.addAll(conditions)
+    terminal.conditions.++=(this.conditions)
+    terminal.conditions.++=(conditions)
     terminal
   }
 }

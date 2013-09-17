@@ -14,7 +14,7 @@ trait Symbol extends Serializable {
 
   def addCondition(condition: Condition): Symbol
 
-  def addConditions(conditions: Seq[Condition]): Symbol
+  def addConditions(conditions: ListBuffer[Condition]): Symbol
 
-  def getConditions(): Seq[Condition]
+  def getConditions(): ListBuffer[Condition]
 }

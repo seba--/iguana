@@ -59,10 +59,10 @@ class Keyword(@BeanProperty val name: String, val chars: Array[Int]) extends Abs
     externalHasher.hash(this, HashFunctions.defaulFunction())
   }
 
-  override def addConditions(conditions: Seq[Condition]): Keyword = {
+  override def addConditions(conditions: ListBuffer[Condition]): Keyword = {
     val keyword = new Keyword(this.name, this.chars)
-    keyword.conditions.addAll(this.conditions)
-    keyword.conditions.addAll(conditions)
+    keyword.conditions.++=(this.conditions)
+    keyword.conditions.++=(conditions)
     keyword
   }
 }

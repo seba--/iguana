@@ -42,7 +42,7 @@ class FollowRestrictionTest {
   }
 
   @org.junit.Rule
-  var thrown: ExpectedException = ExpectedException.none()
+  def thrown: ExpectedException = ExpectedException.none()
 
   @Test
   def test() {

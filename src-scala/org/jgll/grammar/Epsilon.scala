@@ -31,11 +31,11 @@ class Epsilon extends Terminal {
 
   override def asBitSet(): BitSet = new BitSet()
 
-  override def addConditions(condition: Seq[Condition]): Symbol = {
+  override def addConditions(condition: ListBuffer[Condition]): Symbol = {
     throw new UnsupportedOperationException()
   }
 
-  override def getConditions(): Seq[Condition] = {
+  override def getConditions(): ListBuffer[Condition] = {
     throw new UnsupportedOperationException()
   }
 

@@ -45,7 +45,7 @@ class KeywordExclusionTest {
   }
 
   @org.junit.Rule
-  var thrown: ExpectedException = ExpectedException.none()
+  def thrown: ExpectedException = ExpectedException.none()
 
   @Test
   def testWhen() {

@@ -71,10 +71,10 @@ class CharacterClass(@BeanProperty val ranges: List[Range]) extends AbstractSymb
 
   override def asBitSet(): BitSet = testSet
 
-  override def addConditions(conditions: Seq[Condition]): Terminal = {
+  override def addConditions(conditions: ListBuffer[Condition]): Terminal = {
     val characterClass = new CharacterClass(this.ranges)
-    characterClass.conditions.addAll(this.conditions)
-    characterClass.conditions.addAll(conditions)
+    characterClass.conditions.++=(this.conditions)
+    characterClass.conditions.++=(conditions)
     characterClass
   }
 }
