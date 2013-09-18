@@ -52,7 +52,7 @@ object ConditionFactory {
     if (allKeywords(symbols)) {
       new KeywordCondition(`type`, symbols.asInstanceOf[ListBuffer[Keyword]])
     } else if (allTerminal(symbols)) {
-      new TerminalCondition(`type`, symbols.asInstanceOf[List[Terminal]])
+      new TerminalCondition(`type`, symbols.asInstanceOf[ListBuffer[Terminal]])
     } else {
       new ContextFreeCondition(`type`, symbols)
     }

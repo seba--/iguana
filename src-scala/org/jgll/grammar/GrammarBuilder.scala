@@ -876,7 +876,7 @@ class GrammarBuilder(var name: String) extends Serializable {
         while (currentSlot.next() != null) {
           if (currentSlot.isInstanceOf[NonterminalGrammarSlot]) {
             if (!referedNonterminals.contains(currentSlot.asInstanceOf[NonterminalGrammarSlot].getNonterminal)) {
-              queue.add(currentSlot.asInstanceOf[NonterminalGrammarSlot].getNonterminal)
+              queue += (currentSlot.asInstanceOf[NonterminalGrammarSlot].getNonterminal)
             }
           }
           currentSlot = currentSlot.next()
@@ -952,7 +952,7 @@ class GrammarBuilder(var name: String) extends Serializable {
       return
     }
     val nonterminal = new Nonterminal("C_" + count)
-    nonterminal.setCollapsible(true)
+    nonterminal.collapsible = true
     val newHead = new HeadGrammarSlot(nonterminal)
     nonterminalsMap.put(nonterminal, newHead)
     nonterminals.add(newHead)
