@@ -11,11 +11,7 @@ class PositionInfo(@BeanProperty val start: Int,
     @BeanProperty val endLineNumber: Int, 
     @BeanProperty val endColumnNumber: Int) {
 
-  private val startLineNumber = lineNumber
+  def getLineNumber(): Int = lineNumber
 
-  private val startColumnNumber = columnNumber
-
-  def getLineNumber(): Int = startLineNumber
-
-  def getColumn(): Int = startColumnNumber
+  def getColumn(): Int = columnNumber
 }
