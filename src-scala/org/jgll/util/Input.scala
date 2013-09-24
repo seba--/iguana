@@ -6,55 +6,32 @@ import java.io.FileInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.Arrays
-import org.jgll.traversal.PositionInfo
+import org.jgll.traversal.PositionInfoTrait
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.virtualization.lms.common._
 import scala.Array
 import scala.collection.mutable.ListBuffer
-import org.jgll.util.lms.lift.LineColumnOps
 
-import Input._
-
-object Input {
-  class LineColumn(@BeanProperty lineNumber: Int, @BeanProperty columnNumber: Int) {
-
-    def this(lineColumn: LineColumn) {
-      this(lineColumn.lineNumber, lineColumn.columnNumber)
-    }
-
-    override def toString(): String = {
-      "(" + lineNumber + ":" + columnNumber + ")"
-    }
-
-    override def equals(obj: Any): Boolean = {
-      if (!(obj.isInstanceOf[LineColumn])) {
-        return false
-      }
-      val other = obj.asInstanceOf[LineColumn]
-      lineNumber == other.lineNumber && columnNumber == other.columnNumber
-    }
-  }
-}
 
 trait InputTrait
   extends BaseExp
      with ScalaOpsPkg
-     with BooleanOpsExp
-     with Equal
-     with LineColumnOps
+     with BooleanOps
+     with Structs
      with LiftPrimitives
      with LiftBoolean
+     with PositionInfoTrait
 {
   def fromIntArray(input: Rep[Array[Int]]): Input = new Input(input)
 
-  def fromString(s: Rep[String]): Input = {
-    val input = NewArray[Int](s.length + 1)
-    for (i <- 0 until s.length) {
-      input(i) = s.codePointAt(i)
-    }
-    input(s.length) = 0
-    new Input(input)
-  }
+//  def fromString(s: Rep[String]): Input = {
+//    val input = NewArray[Int](s.length + 1)
+//    for (i <- 0 until s.length) {
+//      input(i) = s.codePointAt(i)
+//    }
+//    input(s.length) = 0
+//    new Input(input)
+//  }
 
 //  def fromPath(path: String): Input = fromString(readTextFromFile(path))
 
@@ -87,14 +64,52 @@ trait InputTrait
 //  }
 
   def toIntArray(s: String): Array[Int] = {
-    val array = scala.Array.ofDim[Int](s.codePointCount(0, s.length))
-    for (i <- 0 until array.length) {
+    val length: Int = s.codePointCount(0, s.length)
+    val array: scala.Array[Int] = scala.Array[Int](length)
+    for (i <- Range(0, length)) {
       array(i) = s.codePointAt(i)
     }
     array
   }
 
-  class Input private (private var input: Rep[Array[Int]]) {
+
+
+
+  trait LineColumn extends Record {
+    @BeanProperty val lineNumber: Int
+    @BeanProperty val columnNumber: Int
+//    def this(lineColumn: LineColumn) {
+//      this(lineColumn.lineNumber, lineColumn.columnNumber)
+//    }
+
+    override def toString(): String = {
+      "(" + lineNumber + ":" + columnNumber + ")"
+    }
+
+    override def equals(obj: Any): Boolean = {
+      if (!(obj.isInstanceOf[LineColumn])) {
+        return false
+      }
+      val other = obj.asInstanceOf[LineColumn]
+      lineNumber == other.lineNumber && columnNumber == other.columnNumber
+    }
+  }
+  object LineColumn {
+    def create(lnum: Rep[Int], cnum: Rep[Int]) = new LineColumn {
+        val lineNumber: Int = lnum
+        val columnNumber: Int = cnum
+      }
+
+    def create(lc: Rep[LineColumn]) = new LineColumn {
+      val lineNumber: Int = lc.lineNumber
+      val columnNumber: Int = lc.columnNumber
+    }
+  }
+
+
+
+
+  class Input (private var input: Rep[Array[Int]]) {
 
     private var lineColumns: Rep[Array[LineColumn]] = NewArray[LineColumn](input.length)
 
@@ -221,28 +236,34 @@ trait InputTrait
       }
       else {
         val other = obj.asInstanceOf[Input]
-        Arrays.equals(input, other.input)
+        if (input.length != other.input)
+          return false
+
+        for (i <- 0 until input.length)
+          if (input(i) != other.input(i))
+            return false
+        return true
       }
     }
 
-    def getPositionInfo(leftExtent: Int, rightExtent: Int): PositionInfo = {
-      new PositionInfo(leftExtent,
-                       rightExtent - leftExtent,
-                       getLineNumber(leftExtent),
-                       getColumnNumber(leftExtent),
-                       getLineNumber(rightExtent),
-                       getColumnNumber(rightExtent))
+    def getPositionInfo(leftExtent: Rep[Int], rightExtent: Rep[Int]): Rep[PositionInfo] = {
+      PositionInfo.create(leftExtent,
+                          rightExtent - leftExtent,
+                          getLineNumber(leftExtent),
+                          getColumnNumber(leftExtent),
+                          getLineNumber(rightExtent),
+                          getColumnNumber(rightExtent))
     }
 
     private def calculateLineLengths() {
-      var lineNumber = 1
-      var columnNumber = 1
+      var lineNumber: Rep[Int] = 1
+      var columnNumber: Rep[Int] = 1
       if (input.length == 1) {
-        lineColumns(0) = new LineColumn(lineNumber, columnNumber)
+        lineColumns(0) = LineColumn.create(lineNumber, columnNumber)
         return
       }
       for (i <- 0 until input.length - 1) {
-        lineColumns(i) = new LineColumn(lineNumber, columnNumber)
+        lineColumns(i) = LineColumn.create(lineNumber, columnNumber)
         if (input(i) == '\n') {
           lineNumber += 1
           columnNumber = 1
@@ -252,30 +273,29 @@ trait InputTrait
           columnNumber += 1
         }
       }
-      lineColumns(input.length - 1) = new LineColumn(lineColumns(input.length - 2))
+      lineColumns(input.length - 1) = LineColumn.create(lineColumns(input.length - 2))
     }
 
-    override def toString(): String = {
-      val charList = ListBuffer[Character]()
-      for (i <- input) {
-        val chars = Character.toChars(i)
-        for (c <- chars) {
-          charList += c
-        }
-      }
-      val sb = new StringBuilder()
-      for (c <- charList) {
-        sb.append(c)
-      }
-      sb.toString
+//    override def toString(): String = {
+//      val charList = ListBuffer[Character]()
+//      for (i <- input) {
+//        val chars = Character.toChars(i)
+//        for (c <- chars) {
+//          charList += c
+//        }
+//      }
+//      val sb = new StringBuilder()
+//      for (c <- charList) {
+//        sb.append(c)
+//      }
+//      sb.toString
+//    }
+
+    def isEndOfLine(currentInputIndex: Rep[Int]): Rep[Boolean ]= {
+      input(currentInputIndex) == 0 || lineColumns(currentInputIndex + 1).columnNumber == 0
     }
 
-    def isEndOfLine(currentInputIndex: Int): Boolean = {
-      input(currentInputIndex) == 0 ||
-        lineColumns(currentInputIndex + 1).columnNumber == 0
-    }
-
-    def isStartOfLine(currentInputIndex: Int): Boolean = {
+    def isStartOfLine(currentInputIndex: Rep[Int]): Rep[Boolean] = {
       currentInputIndex == 0 || lineColumns(currentInputIndex).columnNumber == 0
     }
   }
