@@ -1,12 +1,11 @@
 package org.jgll.parser
 
 import org.jgll.grammar.Grammar
-import org.jgll.lookup.LevelBasedLookupTable
-import org.jgll.lookup.RecursiveDescentLookupTable
+import org.jgll.lookup.{RecursiveDescentLookupTableTrait, LevelBasedLookupTable}
 //remove if not needed
 import scala.collection.JavaConversions._
 
-object ParserFactory {
+trait ParserFactory extends GLLParserImplTrait with RecursiveDescentLookupTableTrait {
 
   def recursiveDescentParser(grammar: Grammar): GLLParser = {
     new GLLParserImpl(new RecursiveDescentLookupTable(grammar))

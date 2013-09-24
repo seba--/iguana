@@ -81,7 +81,7 @@ abstract class NonPackedNode(protected val slot: GrammarSlot, protected val left
       return false
     }
     val other = obj.asInstanceOf[NonPackedNode]
-    rightExtent == other.rightExtent && slot == other.slot && 
+    rightExtent == other.rightExtent && slot == other.slot &&
       leftExtent == other.leftExtent
   }
 

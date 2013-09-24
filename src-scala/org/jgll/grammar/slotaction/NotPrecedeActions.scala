@@ -6,14 +6,17 @@ import org.jgll.grammar.Keyword
 import org.jgll.grammar.Terminal
 import org.jgll.grammar.slot.BodyGrammarSlot
 import org.jgll.parser.GLLParserInternals
-import org.jgll.util.Input
+import org.jgll.util.{InputTrait, Input}
 import org.jgll.util.logging.LoggerWrapper
 //remove if not needed
 import scala.collection.JavaConversions._
 
-object NotPrecedeActions {
+trait NotPrecedeActionsTrait extends InputTrait {
 
-  private val log = LoggerWrapper.getLogger(NotPrecedeActions.getClass)
+  import NotPrecedeActions._
+  object NotPrecedeActions {
+    val log = LoggerWrapper.getLogger(NotPrecedeActions.getClass)
+  }
 
   def fromTerminalList(slot: BodyGrammarSlot, terminals: List[Terminal]) {
     log.debug("Precede restriction added %s <<! %s", terminals, slot)

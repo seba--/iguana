@@ -8,13 +8,11 @@ import org.jgll.grammar.slot.GrammarSlot
 import org.jgll.grammar.slot.HeadGrammarSlot
 import org.jgll.grammar.slot.L0
 import org.jgll.grammar.slot.StartSlot
-import org.jgll.util.Input
 import org.jgll.util.hashing.CuckooHashSet
 import org.jgll.util.logging.LoggerWrapper
-import AbstractGLLRecognizer._
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.util.InputTrait
 
+import AbstractGLLRecognizer._
 object AbstractGLLRecognizer {
 
   private val log = LoggerWrapper.getLogger(classOf[AbstractGLLRecognizer])
@@ -44,7 +42,7 @@ abstract class AbstractGLLRecognizer extends GLLRecognizer {
 
   protected var recognized: Boolean = _
 
-  protected var endIndex: Int = _
+  protected var endIndex: Rep[Int] = _
 
   override def recognize(input: Input, grammar: Grammar, nonterminalName: String): Boolean = {
     val startSymbol = grammar.getNonterminalByName(nonterminalName)
@@ -60,9 +58,9 @@ abstract class AbstractGLLRecognizer extends GLLRecognizer {
     recognized
   }
 
-  override def recognize(input: Input, 
-      startIndex: Int, 
-      endIndex: Int, 
+  override def recognize(input: Input,
+      startIndex: Int,
+      endIndex: Rep[Int],
       fromSlot: BodyGrammarSlot): Boolean = {
     init(grammar, input, startIndex, endIndex, null)
     cu = create(startSlot, cu, ci)
@@ -81,10 +79,10 @@ abstract class AbstractGLLRecognizer extends GLLRecognizer {
     log.debug("Memory used: %d mb", (runtime.totalMemory() - runtime.freeMemory()) / mb)
   }
 
-  protected def init(grammar: Grammar, 
-      input: Input, 
-      startIndex: Int, 
-      endIndex: Int, 
+  protected def init(grammar: Grammar,
+      input: Input,
+      startIndex: Int,
+      endIndex: Rep[Int],
       startSymbol: HeadGrammarSlot) {
     this.grammar = grammar
     this.startSymbol = startSymbol

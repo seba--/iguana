@@ -3,17 +3,17 @@ package org.jgll.recognizer
 import org.jgll.grammar.Grammar
 import org.jgll.grammar.slot.BodyGrammarSlot
 import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.util.Input
+import org.jgll.util.{InputTrait, Input}
 //remove if not needed
 import scala.collection.JavaConversions._
 
-trait GLLRecognizer {
+trait GLLRecognizer extends InputTrait {
 
   def recognize(input: Input, grammar: Grammar, nonterminalName: String): Boolean
 
   def recognize(input: Input, 
       start: Int, 
-      end: Int, 
+      end: Rep[Int],
       slot: BodyGrammarSlot): Boolean
 
   def add(label: GrammarSlot, u: GSSNode, inputIndex: Int): Unit

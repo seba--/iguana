@@ -8,11 +8,11 @@ import org.jgll.sppf.NonPackedNode
 import org.jgll.sppf.NonterminalSymbolNode
 import org.jgll.sppf.SPPFNode
 import org.jgll.sppf.TerminalSymbolNode
-import org.jgll.util.Input
+import org.jgll.util.{InputTrait, Input}
 //remove if not needed
 import scala.collection.JavaConversions._
 
-trait LookupTable {
+trait LookupTable extends InputTrait {
 
   def hasNextDescriptor(): Boolean
 
@@ -30,7 +30,7 @@ trait LookupTable {
       leftChild: SPPFNode, 
       rightChild: SPPFNode): Unit
 
-  def getStartSymbol(startSymbol: HeadGrammarSlot, inputSize: Int): NonterminalSymbolNode
+  def getStartSymbol(startSymbol: HeadGrammarSlot, inputSize: Rep[Int]): NonterminalSymbolNode
 
   def hasGSSEdge(source: GSSNode, label: SPPFNode, destination: GSSNode): Boolean
 

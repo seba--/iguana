@@ -1,20 +1,13 @@
 package org.jgll.util
 
-import java.io.BufferedInputStream
-import java.io.File
-import java.io.FileInputStream
-import java.io.IOException
-import java.io.InputStream
-import java.util.Arrays
 import org.jgll.traversal.PositionInfoTrait
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.virtualization.lms.common._
 import scala.Array
-import scala.collection.mutable.ListBuffer
 
 
 trait InputTrait
-  extends BaseExp
+  extends Base
      with ScalaOpsPkg
      with BooleanOps
      with Structs
@@ -23,6 +16,8 @@ trait InputTrait
      with PositionInfoTrait
 {
   def fromIntArray(input: Rep[Array[Int]]): Input = new Input(input)
+
+  // STAGING: how to do Strings?
 
 //  def fromString(s: Rep[String]): Input = {
 //    val input = NewArray[Int](s.length + 1)
@@ -74,7 +69,7 @@ trait InputTrait
 
 
 
-
+  // STAGING: Struct pattern with companion object. Correct?
   trait LineColumn extends Record {
     @BeanProperty val lineNumber: Int
     @BeanProperty val columnNumber: Int
