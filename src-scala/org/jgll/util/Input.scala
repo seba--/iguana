@@ -153,17 +153,6 @@ trait InputTrait
         false
       }
       else {
-//        var i = target.length - 1
-//        var j = start - 1
-//        while (i >= 0) {
-//          if (target(i) != input(j)) {
-//            return false
-//          }
-//          i -= 1
-//          j -= 1
-//        }
-//        true
-
         def loop(i: Int, j: Rep[Int]): Rep[Boolean] =
           if (i < 0)
             true
@@ -180,15 +169,6 @@ trait InputTrait
       if (target.length > size - from)
         false
       else {
-//        var i = 0
-//        while (i < target.length) {
-//          if (target(i) != input(from + i)) {
-//            return false
-//          }
-//          i += 1
-//        }
-//        true
-
         def loop(i: Int): Rep[Boolean] =
           if (i >= target.length)
             true
@@ -211,24 +191,24 @@ trait InputTrait
 
     def getColumnNumber(index: Rep[Int]): Rep[Int] = {
       if (index < 0 || index >= lineColumns.length) {
-        return 0
+        0
       }
-      lineColumns(index).columnNumber
+      else
+        lineColumns(index).columnNumber
     }
 
-    override def equals(obj: Any): Rep[Boolean] = {
-      if (!(obj.isInstanceOf[Input])) {
+    def equal(other: Input): Rep[Boolean] = {
+      if (input.length != other.input)
         false
-      }
       else {
-        val other = obj.asInstanceOf[Input]
-        if (input.length != other.input)
-          return false
-
-        for (i <- 0 until input.length)
+        var i = 0
+        var ok = true
+        while (ok && i < input.length) {
           if (input(i) != other.input(i))
-            return false
-        return true
+            ok = false
+          i += 1
+        }
+        ok
       }
     }
 
@@ -246,20 +226,21 @@ trait InputTrait
       var columnNumber: Rep[Int] = 1
       if (input.length == 1) {
         lineColumns(0) = LineColumn.create(lineNumber, columnNumber)
-        return
       }
-      for (i <- 0 until input.length - 1) {
-        lineColumns(i) = LineColumn.create(lineNumber, columnNumber)
-        if (input(i) == '\n') {
-          lineNumber += 1
-          columnNumber = 1
-        } else if (input(i) == '\r') {
-          columnNumber = 1
-        } else {
-          columnNumber += 1
+      else {
+        for (i <- 0 until input.length - 1) {
+          lineColumns(i) = LineColumn.create(lineNumber, columnNumber)
+          if (input(i) == '\n') {
+            lineNumber += 1
+            columnNumber = 1
+          } else if (input(i) == '\r') {
+            columnNumber = 1
+          } else {
+            columnNumber += 1
+          }
         }
+        lineColumns(input.length - 1) = LineColumn.create(lineColumns(input.length - 2))
       }
-      lineColumns(input.length - 1) = LineColumn.create(lineColumns(input.length - 2))
     }
 
 //    override def toString(): String = {
