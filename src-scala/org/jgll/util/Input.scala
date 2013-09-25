@@ -11,6 +11,7 @@ trait InputTrait
      with ScalaOpsPkg
      with BooleanOps
      with Structs
+     with Equal
      with LiftPrimitives
      with LiftBoolean
      with PositionInfoTrait
@@ -69,25 +70,9 @@ trait InputTrait
 
 
 
-  // STAGING: Struct pattern with companion object. Correct?
-  trait LineColumn extends Record {
-    @BeanProperty val lineNumber: Int
-    @BeanProperty val columnNumber: Int
-//    def this(lineColumn: LineColumn) {
-//      this(lineColumn.lineNumber, lineColumn.columnNumber)
-//    }
-
-    override def toString(): String = {
-      "(" + lineNumber + ":" + columnNumber + ")"
-    }
-
-    override def equals(obj: Any): Boolean = {
-      if (!(obj.isInstanceOf[LineColumn])) {
-        return false
-      }
-      val other = obj.asInstanceOf[LineColumn]
-      lineNumber == other.lineNumber && columnNumber == other.columnNumber
-    }
+  type LineColumn = Record {
+    val lineNumber: Int
+    val columnNumber: Int
   }
   object LineColumn {
     def create(lnum: Rep[Int], cnum: Rep[Int]) = new LineColumn {
@@ -99,6 +84,12 @@ trait InputTrait
       val lineNumber: Int = lc.lineNumber
       val columnNumber: Int = lc.columnNumber
     }
+
+    def equal(lc1: LineColumn, lc2: LineColumn) =
+      lc1.lineNumber == lc2.lineNumber && lc1.columnNumber == lc2.columnNumber
+
+    def toString(lc: LineColumn) =
+      "(" + lc.lineNumber + ":" + lc.columnNumber + ")"
   }
 
 

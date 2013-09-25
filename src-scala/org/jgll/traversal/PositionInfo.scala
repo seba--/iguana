@@ -7,13 +7,13 @@ import scala.virtualization.lms.common.Structs
 import scala.collection.JavaConversions._
 
 trait PositionInfoTrait extends Structs {
-  trait PositionInfo extends Record {
-    @BeanProperty val start: Int
-    @BeanProperty val offset: Int
+  type PositionInfo = Record {
+    val start: Int
+    val offset: Int
     val lineNumber: Int
     val columnNumber: Int
-    @BeanProperty val endLineNumber: Int
-    @BeanProperty val endColumnNumber: Int
+    val endLineNumber: Int
+    val endColumnNumber: Int
   }
 
   object PositionInfo {
