@@ -2,8 +2,6 @@ package org.jgll.util.logging
 
 import java.util.logging.Formatter
 import java.util.logging.LogRecord
-//remove if not needed
-import scala.collection.JavaConversions._
 
 class ParserLogFormatter extends Formatter {
 

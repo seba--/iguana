@@ -1,31 +1,34 @@
 package org.jgll.lookup
 
-import java.util.ArrayDeque
-import java.util.Collections
-import java.util.HashSet
-import java.util.Queue
-import java.util.Set
-import org.jgll.grammar.Grammar
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.parser.Descriptor
-import org.jgll.parser.GSSEdge
-import org.jgll.parser.GSSNode
-import org.jgll.sppf.DummyNode
-import org.jgll.sppf.NonPackedNode
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.PackedNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
+import org.jgll.grammar.GrammarTrait
+import org.jgll.parser.{GSSEdgeTrait, GSSNodeTrait, DescriptorTrait}
+import org.jgll.sppf._
 import org.jgll.util.hashing.CuckooHashMap
 import org.jgll.util.hashing.CuckooHashSet
 import org.jgll.util.logging.LoggerWrapper
 import org.jgll.util.InputTrait
+import org.jgll.grammar.slot.{GrammarSlotTrait, HeadGrammarSlotTrait}
+import scala.virtualization.lms.common.NumericOps
+import scala.collection.mutable
 
-//remove if not needed
-import scala.collection.JavaConversions._
+trait LevelBasedLookupTableTrait {
+  self: InputTrait
+   with GrammarTrait
+   with TerminalSymbolNodeTrait
+   with DescriptorTrait
+   with NonPackedNodeTrait
+   with PackedNodeTrait
+   with HeadGrammarSlotTrait
+   with AbstractLookupTableTrait
+   with GSSNodeTrait
+   with NonterminalSymbolNodeTrait
+   with NumericOps
+   with GSSEdgeTrait
+   with SPPFNodeTrait
+   with GrammarSlotTrait
+   with DummyNodeTrait
 
-trait LevelBasedLookupTableTrait extends InputTrait {
+   =>
 
   private val log = LoggerWrapper.getLogger(classOf[LevelBasedLookupTable])
 
@@ -52,9 +55,9 @@ trait LevelBasedLookupTableTrait extends InputTrait {
 
     private var forwardPackedNodes: Array[CuckooHashSet[PackedNode]] = new Array[CuckooHashSet[PackedNode]](chainLength)
 
-    private var r: Queue[Descriptor] = new ArrayDeque()
+    private var r: mutable.Queue[Descriptor] = new mutable.Queue()
 
-    private var forwardRs: Array[Queue[Descriptor]] = new Array[Queue[Descriptor]](chainLength)
+    private var forwardRs: Array[mutable.Queue[Descriptor]] = new Array[mutable.Queue[Descriptor]](chainLength)
 
     private var currentGssNodes: CuckooHashSet[GSSNode] = new CuckooHashSet(initialSize, GSSNode.levelBasedExternalHasher)
 
@@ -64,9 +67,9 @@ trait LevelBasedLookupTableTrait extends InputTrait {
 
     private var forwardEdges: Array[CuckooHashSet[GSSEdge]] = new Array[CuckooHashSet[GSSEdge]](chainLength)
 
-    private var currentPoppedElements: CuckooHashMap[GSSNode, Set[SPPFNode]] = new CuckooHashMap(GSSNode.levelBasedExternalHasher, initialSize)
+    private var currentPoppedElements: CuckooHashMap[GSSNode, mutable.Set[SPPFNode]] = new CuckooHashMap(GSSNode.levelBasedExternalHasher, initialSize)
 
-    private var forwardPoppedElements: Array[CuckooHashMap[GSSNode, Set[SPPFNode]]] = new Array[CuckooHashMap[GSSNode, Set[SPPFNode]]](chainLength)
+    private var forwardPoppedElements: Array[CuckooHashMap[GSSNode, mutable.Set[SPPFNode]]] = new Array[CuckooHashMap[GSSNode, mutable.Set[SPPFNode]]](chainLength)
 
     private var countGSSNodes: Int = _
 
@@ -82,7 +85,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
 
     for (i <- 0 until chainLength) {
       forwardDescriptors(i) = new CuckooHashSet(getSize, Descriptor.levelBasedExternalHasher)
-      forwardRs(i) = new ArrayDeque[Descriptor](initialSize)
+      forwardRs(i) = mutable.Queue[Descriptor]()
       forwardNodes(i) = new CuckooHashSet(initialSize, NonPackedNode.levelBasedExternalHasher)
       forwardGssNodes(i) = new CuckooHashSet(initialSize, GSSNode.levelBasedExternalHasher)
       forwardEdges(i) = new CuckooHashSet(initialSize, GSSEdge.levelBasedExternalHasher)
@@ -131,7 +134,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
 
     private def indexFor(inputIndex: Rep[Int]): Int = inputIndex % chainLength
 
-    override def getNonPackedNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Int): NonPackedNode = {
+    override def getNonPackedNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Rep[Int]): NonPackedNode = {
       var newNodeCreated = false
       val key = createNonPackedNode(slot, leftExtent, rightExtent)
       var value: NonPackedNode = null
@@ -194,7 +197,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
     override def nextDescriptor(): Descriptor = {
       if (!r.isEmpty) {
         size -= 1
-        r.remove()
+        r.dequeue
       } else {
         gotoNextLevel()
         nextDescriptor()
@@ -207,7 +210,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
       val inputIndex = descriptor.getInputIndex
       if (inputIndex == currentLevel) {
         if (u.add(descriptor) == null) {
-          r.add(descriptor)
+          r += (descriptor)
           size += 1
           all += 1
         } else {
@@ -216,7 +219,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
       } else {
         val index = indexFor(descriptor.getInputIndex)
         if (forwardDescriptors(index).add(descriptor) == null) {
-          forwardRs(index).add(descriptor)
+          forwardRs(index) += (descriptor)
           size += 1
           all += 1
         } else {
@@ -270,7 +273,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
 
     override def getGSSNodesCount(): Int = countGSSNodes
 
-    override def getGSSNodes(): java.lang.Iterable[GSSNode] = {
+    override def getGSSNodes(): Iterable[GSSNode] = {
       throw new UnsupportedOperationException()
     }
 
@@ -280,7 +283,7 @@ trait LevelBasedLookupTableTrait extends InputTrait {
         leftChild: SPPFNode,
         rightChild: SPPFNode) {
       if (parent.getCountPackedNode == 0) {
-        if (leftChild != DummyNode.getInstance) {
+        if (leftChild != DummyNode) {
           parent.addChild(leftChild)
         }
         parent.addChild(rightChild)
@@ -329,39 +332,39 @@ trait LevelBasedLookupTableTrait extends InputTrait {
       if (gssNode.getInputIndex == currentLevel) {
         var set = currentPoppedElements.get(gssNode)
         if (set == null) {
-          set = new HashSet()
+          set = mutable.Set[SPPFNode]()
           currentPoppedElements.put(gssNode, set)
         }
-        set.add(sppfNode)
+        set += (sppfNode)
       } else {
         val index = indexFor(gssNode.getInputIndex)
         var set = forwardPoppedElements(index).get(gssNode)
         if (set == null) {
-          set = new HashSet()
+          set = mutable.Set[SPPFNode]()
         }
         set.add(sppfNode)
       }
     }
 
-    override def getSPPFNodesOfPoppedElements(gssNode: GSSNode): java.lang.Iterable[SPPFNode] = {
+    override def getSPPFNodesOfPoppedElements(gssNode: GSSNode): mutable.Set[SPPFNode] = {
       if (gssNode.getInputIndex == currentLevel) {
         var set = currentPoppedElements.get(gssNode)
         if (set == null) {
-          set = Collections.emptySet()
+          set = mutable.Set[SPPFNode]()
         }
         set
       } else {
         val index = indexFor(gssNode.getInputIndex)
         var set = forwardPoppedElements(index).get(gssNode)
         if (set == null) {
-          set = Collections.emptySet()
+          set = mutable.Set[SPPFNode]()
         }
         set
       }
     }
 
     override def init(input: Input) {
-      terminals = Array.ofDim[TerminalSymbolNode](chainLength + 1, 2)
+      terminals = scala.Array.ofDim[TerminalSymbolNode](chainLength + 1, 2)
       u.clear()
       r.clear()
       currentNodes.clear()

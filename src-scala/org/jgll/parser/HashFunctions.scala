@@ -2,8 +2,6 @@ package org.jgll.parser
 
 import org.jgll.util.hashing.hashfunction.HashFunction
 import org.jgll.util.hashing.hashfunction.MurmurHash3
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object HashFunctions {
 

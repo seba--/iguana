@@ -1,17 +1,14 @@
 package org.jgll.grammar.ebnf
 
-import java.util.Arrays
-import java.util.HashSet
-import java.util.List
-import java.util.Set
 import org.jgll.grammar.Group
 import org.jgll.grammar.Nonterminal
 import org.jgll.grammar.Opt
 import org.jgll.grammar.Plus
 import org.jgll.grammar.Rule
 import org.jgll.grammar.Symbol
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
+
+import collection.mutable
 
 object EBNFUtil {
 
@@ -19,17 +16,17 @@ object EBNFUtil {
     s.isInstanceOf[Plus] || s.isInstanceOf[Opt] || s.isInstanceOf[Group]
   }
 
-  def rewrite(rules: Rule*): java.lang.Iterable[Rule] = rewrite(Arrays.asList(rules:_*))
+  def rewrite(rules: Rule*): Iterable[Rule] = rewrite(ListBuffer() ++= (rules:_*))
 
-  def rewrite(rules: java.lang.Iterable[Rule]): java.lang.Iterable[Rule] = {
-    val set = new HashSet[Rule]()
+  def rewrite(rules: Iterable[Rule]): Iterable[Rule] = {
+    val set = mutable.Set[Rule]()
     for (rule <- rules) {
-      set.add(rewrite(rule, set))
+      set += (rewrite(rule, set))
     }
     set
   }
 
-  def rewrite(rule: Rule, rules: Set[Rule]): Rule = {
+  def rewrite(rule: Rule, rules: mutable.Set[Rule]): Rule = {
     val builder = new Rule.Builder(rule.getHead)
     for (s <- rule.getBody) {
       builder.addSymbol(rewrite(s, rules))
@@ -37,7 +34,7 @@ object EBNFUtil {
     builder.build()
   }
 
-  def rewrite(s: Symbol, rules: Set[Rule]): Symbol = {
+  def rewrite(s: Symbol, rules: mutable.Set[Rule]): Symbol = {
     if (!isEBNF(s)) {
       return s
     }

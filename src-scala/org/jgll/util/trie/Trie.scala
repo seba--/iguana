@@ -1,9 +1,6 @@
 package org.jgll.util.trie
 
-import java.util.Iterator
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
 
 class Trie[T] {
 

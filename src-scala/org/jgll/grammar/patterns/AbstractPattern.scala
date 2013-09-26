@@ -7,20 +7,15 @@ import org.jgll.parser.HashFunctions
 
 import collection.mutable._
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 @SerialVersionUID(1L)
-class AbstractPattern(nonteriminal: Nonterminal, 
+class AbstractPattern(val nonterminal: Nonterminal,
     _parent: ListBuffer[Symbol],
     protected val position: Int, 
     _child: ListBuffer[Symbol]) extends Serializable {
 
-  protected val parent = ListBuffer[Symbol]() ++ _parent
+  val parent = ListBuffer[Symbol]() ++ _parent
 
-  protected val child = ListBuffer[Symbol]() ++ _child
-
-  protected val nonterminal = nonteriminal
+  val child = ListBuffer[Symbol]() ++ _child
 
   if (parent == null || child == null) {
     throw new IllegalArgumentException("parent or child alternates cannot be null.")
@@ -34,7 +29,7 @@ class AbstractPattern(nonteriminal: Nonterminal,
 
   def getNonterminal(): Nonterminal = nonterminal
 
-  def getFilteredNontemrinalName(): String = parent.get(position).getName
+  def getFilteredNontemrinalName(): String = parent(position).getName
 
   override def hashCode(): Int = {
     HashFunctions.defaulFunction().hash(nonterminal.hashCode, position, parent.hashCode)

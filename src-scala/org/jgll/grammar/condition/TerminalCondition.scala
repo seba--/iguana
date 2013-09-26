@@ -1,20 +1,19 @@
 package org.jgll.grammar.condition
 
-import java.util.List
-import org.jgll.grammar.Terminal
+import org.jgll.grammar.TerminalTrait
 import org.jgll.util.CollectionsUtil._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
+import scala.reflect.BeanProperty
 import org.jgll.grammar.condition.ConditionType._
+import scala.collection.mutable.ListBuffer
 
-//remove if not needed
-import scala.collection.JavaConversions._
+trait TerminalConditionTrait {
+  self: TerminalTrait =>
+  @SerialVersionUID(1L)
+  class TerminalCondition(`type`: ConditionType, @BeanProperty val terminals: ListBuffer[Terminal])
+      extends Condition(`type`) {
 
-
-@SerialVersionUID(1L)
-class TerminalCondition(`type`: ConditionType, @BeanProperty var terminals: List[Terminal])
-    extends Condition(`type`) {
-
-  override def toString(): String = {
-    `type`.toString + " " + listToString(terminals)
+    override def toString(): String = {
+      `type`.toString + " " + listToString(terminals)
+    }
   }
 }

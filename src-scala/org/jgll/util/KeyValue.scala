@@ -1,13 +1,11 @@
 package org.jgll.util
 
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
 
-class KeyValue[K, V](@BeanProperty val key: K, @BeanProperty var vvalue: V) extends java.util.Map.Entry[K, V] {
+class KeyValue[K, V](@BeanProperty val key: K, @BeanProperty var vvalue: V) {
 
-  override def getValue = vvalue
-  override def setValue(v: V) = {
+  def getValue = vvalue
+  def setValue(v: V) = {
     val old = vvalue
     vvalue = v
     old

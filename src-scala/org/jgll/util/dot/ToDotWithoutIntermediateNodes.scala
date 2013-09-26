@@ -1,21 +1,23 @@
 package org.jgll.util.dot
 
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.PackedNode
-import org.jgll.traversal.SPPFVisitor
-import org.jgll.traversal.SPPFVisitorUtil
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.sppf.{NonterminalSymbolNodeTrait, PackedNodeTrait}
+import org.jgll.traversal.SPPFVisitorUtilTrait
 
-class ToDotWithoutIntermediateNodes extends SPPFToDot {
+trait ToDotWithoutIntermediateNodesTrait {
+  self: SPPFToDotTrait
+   with PackedNodeTrait
+   with SPPFVisitorUtilTrait
+   with NonterminalSymbolNodeTrait =>
+  class ToDotWithoutIntermediateNodes extends SPPFToDot {
 
-  override def visit(node: PackedNode) {
-    SPPFVisitorUtil.removeIntermediateNode(node)
-    super.visit(node)
-  }
+    override def visit(node: PackedNode) {
+      SPPFVisitorUtil.removeIntermediateNode(node)
+      super.visit(node)
+    }
 
-  override def visit(node: NonterminalSymbolNode) {
-    SPPFVisitorUtil.removeIntermediateNode(node)
-    super.visit(node)
+    override def visit(node: NonterminalSymbolNode) {
+      SPPFVisitorUtil.removeIntermediateNode(node)
+      super.visit(node)
+    }
   }
 }

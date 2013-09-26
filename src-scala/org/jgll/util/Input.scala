@@ -1,13 +1,13 @@
 package org.jgll.util
 
 import org.jgll.traversal.PositionInfoTrait
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.virtualization.lms.common._
 import scala.Array
+import java.io.{BufferedInputStream, InputStream}
 
 
-trait InputTrait
-  extends Base
+trait InputTrait {
+    self: Base
      with ScalaOpsPkg
      with BooleanOps
      with Structs
@@ -15,59 +15,60 @@ trait InputTrait
      with LiftPrimitives
      with LiftBoolean
      with PositionInfoTrait
-{
-  def fromIntArray(input: Rep[Array[Int]]): Input = new Input(input)
+  =>
+  object Input {
+    def fromIntArray(input: Rep[Array[Int]]): Input = new Input(input)
 
-  // STAGING: how to do Strings?
+    // STAGING: how to do Strings?
 
-//  def fromString(s: Rep[String]): Input = {
-//    val input = NewArray[Int](s.length + 1)
-//    for (i <- 0 until s.length) {
-//      input(i) = s.codePointAt(i)
-//    }
-//    input(s.length) = 0
-//    new Input(input)
-//  }
+  //  def fromString(s: Rep[String]): Input = {
+  //    val input = NewArray[Int](s.length + 1)
+  //    for (i <- 0 until s.length) {
+  //      input(i) = s.codePointAt(i)
+  //    }
+  //    input(s.length) = 0
+  //    new Input(input)
+  //  }
 
-//  def fromPath(path: String): Input = fromString(readTextFromFile(path))
+  //  def fromPath(path: String): Input = fromString(readTextFromFile(path))
 
-//  private def readTextFromFile(path: String): String = readTextFromFile(new File(path))
+  //  private def readTextFromFile(path: String): String = readTextFromFile(new File(path))
 
-//  private def readTextFromFile(file: File): String = {
-//    val sb = new StringBuilder()
-//    val in = new BufferedInputStream(new FileInputStream(file))
-//    var c = 0
-//    def setC(i: Int) = { c = i; c }
-//
-//    while (setC(in.read()) != -1) {
-//      sb.append(c.toChar)
-//    }
-//    in.close()
-//    sb.toString
-//  }
+  //  private def readTextFromFile(file: File): String = {
+  //    val sb = new StringBuilder()
+  //    val in = new BufferedInputStream(new FileInputStream(file))
+  //    var c = 0
+  //    def setC(i: Int) = { c = i; c }
+  //
+  //    while (setC(in.read()) != -1) {
+  //      sb.append(c.toChar)
+  //    }
+  //    in.close()
+  //    sb.toString
+  //  }
 
-//  def read(is: InputStream): String = {
-//    val sb = new StringBuilder()
-//    val in = new BufferedInputStream(is)
-//    var c = 0
-//    def setC(i: Int) = { c = i; c }
-//
-//    while (setC(in.read()) != -1) {
-//      sb.append(c.toChar)
-//    }
-//    in.close()
-//    sb.toString
-//  }
+    def read(is: InputStream): String = {
+      val sb = new StringBuilder()
+      val in = new BufferedInputStream(is)
+      var c = 0
+      def setC(i: Int) = { c = i; c }
 
-  def toIntArray(s: String): Array[Int] = {
-    val length: Int = s.codePointCount(0, s.length)
-    val array: scala.Array[Int] = scala.Array[Int](length)
-    for (i <- Range(0, length)) {
-      array(i) = s.codePointAt(i)
+      while (setC(in.read()) != -1) {
+        sb.append(c.toChar)
+      }
+      in.close()
+      sb.toString
     }
-    array
-  }
 
+    def toIntArray(s: String): Array[Int] = {
+      val length: Int = s.codePointCount(0, s.length)
+      val array: scala.Array[Int] = scala.Array[Int](length)
+      for (i <- Range(0, length)) {
+        array(i) = s.codePointAt(i)
+      }
+      array
+    }
+  }
 
 
   type LineColumn = Record {
@@ -93,7 +94,7 @@ trait InputTrait
   }
 
 
-
+  import Input._
 
   class Input (private var input: Rep[Array[Int]]) {
 

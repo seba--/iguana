@@ -14,8 +14,6 @@ import org.jgll.sppf.TerminalSymbolNode
 import org.jgll.util.Input
 import org.junit.Before
 import org.junit.Test
-//remove if not needed
-import scala.collection.JavaConversions._
 
 class DanglingElseGrammar1 {
 

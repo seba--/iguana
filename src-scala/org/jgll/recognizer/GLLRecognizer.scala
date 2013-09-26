@@ -1,36 +1,44 @@
 package org.jgll.recognizer
 
-import org.jgll.grammar.Grammar
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.util.{InputTrait, Input}
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.util.InputTrait
+import org.jgll.grammar.GrammarTrait
+import org.jgll.grammar.slot.BodyGrammarSlotTrait
+import org.jgll.grammar.slot.GrammarSlotTrait
 
-trait GLLRecognizer extends InputTrait {
 
-  def recognize(input: Input, grammar: Grammar, nonterminalName: String): Boolean
+trait GLLRecognizerTrait {
+  self: GrammarTrait
+   with BodyGrammarSlotTrait
+   with GrammarSlotTrait
+   with InputTrait
+   with GSSNodeTrait
+   with DescriptorTrait
+  =>
+  trait GLLRecognizer {
 
-  def recognize(input: Input, 
-      start: Int, 
-      end: Rep[Int],
-      slot: BodyGrammarSlot): Boolean
+    def recognize(input: Input, grammar: Grammar, nonterminalName: String): Boolean
 
-  def add(label: GrammarSlot, u: GSSNode, inputIndex: Int): Unit
+    def recognize(input: Input,
+        start: Int,
+        end: Rep[Int],
+        slot: BodyGrammarSlot): Boolean
 
-  def pop(u: GSSNode, i: Int): Unit
+    def add(label: GrammarSlot, u: GSSNode, inputIndex: Int): Unit
 
-  def create(L: GrammarSlot, u: GSSNode, i: Int): GSSNode
+    def pop(u: GSSNode, i: Int): Unit
 
-  def hasNextDescriptor(): Boolean
+    def create(L: GrammarSlot, u: GSSNode, i: Int): GSSNode
 
-  def nextDescriptor(): Descriptor
+    def hasNextDescriptor(): Boolean
 
-  def getCi(): Int
+    def nextDescriptor(): Descriptor
 
-  def getCu(): GSSNode
+    def getCi(): Int
 
-  def update(gssNode: GSSNode, inputIndex: Int): Unit
+    def getCu(): GSSNode
 
-  def recognitionError(gssNode: GSSNode, inputIndex: Int): Unit
+    def update(gssNode: GSSNode, inputIndex: Int): Unit
+
+    def recognitionError(gssNode: GSSNode, inputIndex: Int): Unit
+  }
 }

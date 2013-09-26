@@ -5,9 +5,6 @@ import scala.reflect.{BeanProperty, BooleanBeanProperty}
 
 import scala.collection.mutable._
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 @SerialVersionUID(1L)
 class Nonterminal(@BeanProperty val name: String,
                   private val ebnfList: Boolean = false,

@@ -1,21 +1,23 @@
 package org.jgll.sppf
 
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.traversal.SPPFVisitor
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.grammar.slot.GrammarSlotTrait
+import org.jgll.traversal.SPPFVisitorTrait
+import scala.virtualization.lms.common.Base
 
-class IntermediateNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Int)
-    extends NonPackedNode(slot, leftExtent, rightExtent) {
+trait IntermediateNodeTrait {
+  self: GrammarSlotTrait with NonPackedNodeTrait with SPPFVisitorTrait with SPPFNodeTrait with Base =>
+  class IntermediateNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Rep[Int])
+      extends NonPackedNode(slot, leftExtent, rightExtent) {
 
-  override def equals(obj: Any): Boolean = {
-    if (!(obj.isInstanceOf[IntermediateNode])) {
-      return false
+    override def equals(obj: Any): Boolean = {
+      if (!(obj.isInstanceOf[IntermediateNode])) {
+        return false
+      }
+      super.equals(obj)
     }
-    super.equals(obj)
-  }
 
-  override def accept(visitAction: SPPFVisitor) {
-    visitAction.visit(this)
+    override def accept(visitAction: SPPFVisitor) {
+      visitAction.visit(this)
+    }
   }
 }

@@ -9,8 +9,6 @@ import org.jgll.util.hashing.hashfunction.MurmurHash3
 import org.jgll.util.hashing.hashfunction.SuperFastHash
 import org.jgll.util.hashing.hashfunction.SuperFastHash16BitOnly
 import org.jgll.util.hashing.hashfunction.XXHash
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object RunBenchmark {
 

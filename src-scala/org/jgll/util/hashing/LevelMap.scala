@@ -3,8 +3,6 @@ package org.jgll.util.hashing
 import java.io.Serializable
 import org.jgll.util.hashing.hashfunction.HashFunction
 import LevelMap._
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object LevelMap {
 

@@ -1,27 +1,35 @@
 package org.jgll.parser
 
-import org.jgll.grammar.Grammar
-import org.jgll.grammar.Keyword
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.grammar.slot.KeywordGrammarSlot
-import org.jgll.grammar.slot.L0
-import org.jgll.grammar.slot.LastGrammarSlot
-import org.jgll.grammar.slot.NonterminalGrammarSlot
-import org.jgll.grammar.slot.TerminalGrammarSlot
-import org.jgll.grammar.slotaction.SlotAction
-import org.jgll.lookup.LookupTable
-import org.jgll.sppf.DummyNode
-import org.jgll.sppf.NonPackedNode
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
 import org.jgll.util.logging.LoggerWrapper
 import org.jgll.util.InputTrait
+import org.jgll.sppf._
+import org.jgll.lookup.LookupTableTrait
+import org.jgll.grammar.{KeywordTrait,GrammarTrait}
+import org.jgll.grammar.slot._
 
-trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
-  import GLLParserImpl._
+trait GLLParserImplTrait {
+  self: InputTrait
+   with ParseErrorTrait
+   with GSSNodeTrait
+   with SPPFNodeTrait
+   with LookupTableTrait
+   with GLLParserInternalsTrait
+   with GLLParserTrait
+   with DummyNodeTrait
+   with GrammarTrait
+   with GrammarSlotTrait
+   with NonterminalSymbolNodeTrait
+   with L0Trait
+   with DescriptorTrait
+   with BodyGrammarSlotTrait
+   with LastGrammarSlotTrait
+   with NonPackedNodeTrait
+   with KeywordTrait
+   with TerminalSymbolNodeTrait
+   with TerminalGrammarSlotTrait
+   with NonterminalGrammarSlotTrait
+   with KeywordGrammarSlotTrait
+   with HeadGrammarSlotTrait =>
   object GLLParserImpl {
     private val log = LoggerWrapper.getLogger(classOf[GLLParserImpl])
 
@@ -34,7 +42,7 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
 
     protected var cu: GSSNode = u0
 
-    protected var cn: SPPFNode = DummyNode.getInstance
+    protected var cn: SPPFNode = DummyNode
 
     protected var ci: Int = 0
 
@@ -58,7 +66,7 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
       init()
       lookupTable.init(input)
       val start = System.nanoTime()
-      L0.getInstance.parse(this, input, startSymbol)
+      L0.parse(this, input, startSymbol)
       val end = System.nanoTime()
       val root = lookupTable.getStartSymbol(startSymbol, input.size)
       if (root == null) {
@@ -91,7 +99,7 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
 
     private def init() {
       cu = u0
-      cn = DummyNode.getInstance
+      cn = DummyNode
       ci = 0
       errorSlot = null
       errorIndex = -1
@@ -108,14 +116,14 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
     }
 
     override def addDescriptor(label: GrammarSlot) {
-      add(label, cu, ci, DummyNode.getInstance)
+      add(label, cu, ci, DummyNode)
     }
 
     override def pop() {
       if (cu != u0) {
         log.trace("Pop %s, %d, %s", cu.getGrammarSlot, ci, cn)
-        for (popAction <- cu.getGrammarSlot.asInstanceOf[BodyGrammarSlot].getPopActions if popAction.execute(this,
-          input)) {
+        for (popAction <- cu.getGrammarSlot.asInstanceOf[BodyGrammarSlot].getPopActions
+               if popAction.execute(this, input)) {
           return
         }
         lookupTable.addToPoppedElements(cu, cn)
@@ -123,9 +131,10 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
           assert(cu.getGrammarSlot.isInstanceOf[BodyGrammarSlot])
           val slot = cu.getGrammarSlot
           var y: SPPFNode = null
-          y = if (slot.isInstanceOf[LastGrammarSlot]) getNonterminalNode(slot.asInstanceOf[LastGrammarSlot],
-            edge.getSppfNode, cn) else getIntermediateNode(slot.asInstanceOf[BodyGrammarSlot], edge.getSppfNode,
-            cn)
+          y = if (slot.isInstanceOf[LastGrammarSlot])
+                getNonterminalNode(slot.asInstanceOf[LastGrammarSlot], edge.getSppfNode, cn)
+              else
+                getIntermediateNode(slot.asInstanceOf[BodyGrammarSlot], edge.getSppfNode, cn)
           add(cu.getGrammarSlot, edge.getDestination, ci, y)
         }
       }
@@ -176,7 +185,7 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
       val t = slot.getHead
       var leftExtent: Int = 0
       val rightExtent = rightChild.getRightExtent
-      leftExtent = if (leftChild != DummyNode.getInstance) leftChild.getLeftExtent else rightChild.getLeftExtent
+      leftExtent = if (leftChild != DummyNode) leftChild.getLeftExtent else rightChild.getLeftExtent
       val newNode = lookupTable.getNonPackedNode(t, leftExtent, rightExtent).asInstanceOf[NonPackedNode]
       lookupTable.addPackedNode(newNode, slot, rightChild.getLeftExtent, leftChild, rightChild)
       newNode
@@ -193,7 +202,7 @@ trait GLLParserImplTrait extends InputTrait with ParseErrorTrait {
       }
       var leftExtent: Int = 0
       val rightExtent = rightChild.getRightExtent
-      leftExtent = if (leftChild != DummyNode.getInstance) leftChild.getLeftExtent else rightChild.getLeftExtent
+      leftExtent = if (leftChild != DummyNode) leftChild.getLeftExtent else rightChild.getLeftExtent
       val newNode = lookupTable.getNonPackedNode(slot, leftExtent, rightExtent).asInstanceOf[NonPackedNode]
       lookupTable.addPackedNode(newNode, slot, rightChild.getLeftExtent, leftChild, rightChild)
       newNode

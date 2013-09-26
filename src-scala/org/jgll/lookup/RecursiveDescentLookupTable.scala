@@ -1,39 +1,38 @@
 package org.jgll.lookup
 
-import java.util.ArrayDeque
-import java.util.Collections
-import java.util.Deque
-import java.util.HashSet
-import java.util.Set
-import org.jgll.grammar.Grammar
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.parser.Descriptor
-import org.jgll.parser.GSSEdge
-import org.jgll.parser.GSSNode
-import org.jgll.sppf.DummyNode
-import org.jgll.sppf.NonPackedNode
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.PackedNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
+import org.jgll.grammar.GrammarTrait
+import org.jgll.grammar.slot.{HeadGrammarSlotTrait, GrammarSlotTrait}
+import org.jgll.parser.{GSSNodeTrait, GSSEdgeTrait, DescriptorTrait}
+import org.jgll.sppf._
 import org.jgll.util.hashing.CuckooHashMap
 import org.jgll.util.hashing.CuckooHashSet
 import org.jgll.util.logging.LoggerWrapper
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
+import scala.reflect.BeanProperty
 import org.jgll.util.InputTrait
+import collection.mutable.Set
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
-trait RecursiveDescentLookupTableTrait extends InputTrait {
+trait RecursiveDescentLookupTableTrait {
+  self: InputTrait
+   with GrammarTrait
+   with DescriptorTrait
+   with NonPackedNodeTrait
+   with PackedNodeTrait
+   with TerminalSymbolNodeTrait
+   with AbstractLookupTableTrait
+   with GrammarSlotTrait
+   with HeadGrammarSlotTrait
+   with NonterminalSymbolNodeTrait
+   with GSSEdgeTrait
+   with GSSNodeTrait
+   with SPPFNodeTrait
+   with DummyNodeTrait=>
 
   private val log = LoggerWrapper.getLogger(classOf[RecursiveDescentLookupTable])
 
 
   class RecursiveDescentLookupTable(grammar: Grammar) extends AbstractLookupTable(grammar) {
 
-    private var descriptorsStack: Deque[Descriptor] = new ArrayDeque()
+    private var descriptorsStack: collection.mutable.Queue[Descriptor] = collection.mutable.Queue()
 
     private var descriptorsSet: CuckooHashSet[Descriptor] = new CuckooHashSet(Descriptor.externalHasher)
 
@@ -75,17 +74,17 @@ trait RecursiveDescentLookupTableTrait extends InputTrait {
 
     override def getGSSNodesCount(): Int = gssNodes.size
 
-    override def getGSSNodes(): java.lang.Iterable[GSSNode] = gssNodes
+    override def getGSSNodes(): Set[GSSNode] = gssNodes
 
     override def hasNextDescriptor(): Boolean = !descriptorsStack.isEmpty
 
-    override def nextDescriptor(): Descriptor = descriptorsStack.pop()
+    override def nextDescriptor(): Descriptor = descriptorsStack.dequeue()
 
     override def addDescriptor(descriptor: Descriptor): Boolean = {
       if (descriptorsSet.contains(descriptor)) {
         return false
       }
-      descriptorsStack.push(descriptor)
+      descriptorsStack += (descriptor)
       descriptorsSet.add(descriptor)
       true
     }
@@ -126,7 +125,7 @@ trait RecursiveDescentLookupTableTrait extends InputTrait {
         leftChild: SPPFNode,
         rightChild: SPPFNode) {
       if (parent.getCountPackedNode == 0) {
-        if (leftChild != DummyNode.getInstance) {
+        if (leftChild != DummyNode) {
           parent.addChild(leftChild)
         }
         parent.addChild(rightChild)
@@ -164,17 +163,17 @@ trait RecursiveDescentLookupTableTrait extends InputTrait {
     override def addToPoppedElements(gssNode: GSSNode, sppfNode: SPPFNode) {
       var set = poppedElements.get(gssNode)
       if (set == null) {
-        set = new HashSet()
+        set = collection.mutable.Set[SPPFNode]()
         poppedElements.put(gssNode, set)
       }
       log.trace("Added to P: %s -> %s", gssNode, sppfNode)
-      set.add(sppfNode)
+      set += (sppfNode)
     }
 
-    override def getSPPFNodesOfPoppedElements(gssNode: GSSNode): java.lang.Iterable[SPPFNode] = {
+    override def getSPPFNodesOfPoppedElements(gssNode: GSSNode): Set[SPPFNode] = {
       val set = poppedElements.get(gssNode)
       if (set == null) {
-        return Collections.emptySet()
+        return collection.mutable.Set[SPPFNode]()
       }
       set
     }

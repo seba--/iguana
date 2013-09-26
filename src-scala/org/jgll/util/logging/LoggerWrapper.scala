@@ -3,9 +3,6 @@ package org.jgll.util.logging
 import java.util.logging.ConsoleHandler
 import java.util.logging.Level
 import java.util.logging.Logger
-import LoggerWrapper._
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object LoggerWrapper {
 

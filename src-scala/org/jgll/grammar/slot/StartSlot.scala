@@ -1,22 +1,27 @@
 package org.jgll.grammar.slot
 
-import java.io.IOException
 import java.io.Writer
-import org.jgll.parser.GLLParserInternals
-import org.jgll.recognizer.GLLRecognizer
-import org.jgll.util.Input
+import org.jgll.parser.GLLParserInternalsTrait
+import org.jgll.recognizer.GLLRecognizerTrait
+import org.jgll.util.InputTrait
 //remove if not needed
-import scala.collection.JavaConversions._
 
-@SerialVersionUID(1L)
-class StartSlot(label: String) extends GrammarSlot {
+trait StartSlotTrait {
+  self: GLLParserInternalsTrait
+   with GLLRecognizerTrait
+   with InputTrait
+   with GrammarSlotTrait =>
 
-  id = -2
+  @SerialVersionUID(1L)
+  class StartSlot(label: String) extends GrammarSlot {
 
-  override def codeParser(writer: Writer) {
+    id = -2
+
+    override def codeParser(writer: Writer) {
+    }
+
+    override def parse(parser: GLLParserInternals, input: Input): GrammarSlot = null
+
+    override def recognize(recognizer: GLLRecognizer, input: Input): GrammarSlot = null
   }
-
-  override def parse(parser: GLLParserInternals, input: Input): GrammarSlot = null
-
-  override def recognize(recognizer: GLLRecognizer, input: Input): GrammarSlot = null
 }

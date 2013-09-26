@@ -1,19 +1,16 @@
 package org.jgll.util.trie
 
-import java.util.ArrayList
-import java.util.List
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
+import scala.collection.mutable.ListBuffer
 
 class Node[T] {
 
   @BeanProperty
-  var edges: List[Edge[T]] = new ArrayList()
+  var edges: ListBuffer[Edge[T]] = ListBuffer()
 
   def size(): Int = edges.size
 
   def addChild(edge: Edge[T]) {
-    edges.add(edge)
+    edges += (edge)
   }
 }

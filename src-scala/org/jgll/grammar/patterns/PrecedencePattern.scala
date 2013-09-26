@@ -6,23 +6,20 @@ import org.jgll.grammar.Symbol
 
 import collection.mutable._
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 @SerialVersionUID(1L)
-class PrecedencePattern(nonteriminal: Nonterminal, 
+class PrecedencePattern(nonterminal: Nonterminal,
     parent: ListBuffer[Symbol],
     position: Int, 
-    child: ListBuffer[Symbol]) extends AbstractPattern(nonteriminal, parent, position, child) with Serializable {
+    child: ListBuffer[Symbol]) extends AbstractPattern(nonterminal, parent, position, child) with Serializable {
 
-  def isDirect(): Boolean = nonterminal == parent.get(position)
+  def isDirect(): Boolean = nonterminal == parent(position)
 
   def isParentBinary(): Boolean = {
-    nonterminal == parent.get(0) && nonterminal == parent.get(parent.size - 1)
+    nonterminal == parent(0) && nonterminal == parent(parent.size - 1)
   }
 
   def isChildBinary(): Boolean = {
-    nonterminal == child.get(0) && nonterminal == child.get(child.size - 1)
+    nonterminal == child(0) && nonterminal == child(child.size - 1)
   }
 
   def isLeftMost(): Boolean = position == 0

@@ -7,9 +7,6 @@ import Rule._
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.collection.mutable.ListBuffer
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 object Rule {
 
   class Builder(var head: Nonterminal) {
@@ -72,7 +69,7 @@ class Rule(@BeanProperty val head: Nonterminal,
     if (index > body.size) {
       throw new IllegalArgumentException(index + " cannot be greater than " + body.size)
     }
-    body.get(index)
+    body(index)
   }
 
   override def toString(): String = {

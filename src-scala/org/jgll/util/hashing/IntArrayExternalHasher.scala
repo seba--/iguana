@@ -1,11 +1,7 @@
 package org.jgll.util.hashing
 
-import java.util.Arrays
 import org.jgll.util.hashing.hashfunction.HashFunction
-import IntArrayExternalHasher._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
 
 object IntArrayExternalHasher {
 
@@ -18,5 +14,5 @@ class IntArrayExternalHasher extends ExternalHasher[Array[Int]] {
 
   override def hash(t: Array[Int], f: HashFunction): Int = f.hash(t)
 
-  override def equals(t1: Array[Int], t2: Array[Int]): Boolean = Arrays.equals(t1, t2)
+  override def equals(t1: Array[Int], t2: Array[Int]): Boolean = t1 == t2
 }

@@ -1,10 +1,7 @@
 package org.jgll.util.dot
 
 import java.io.FileWriter
-import java.io.Writer
 import org.jgll.util.logging.LoggerWrapper
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object GraphVizUtil {
 

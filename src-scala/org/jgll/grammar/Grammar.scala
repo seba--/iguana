@@ -3,24 +3,27 @@ package org.jgll.grammar
 import java.io.IOException
 import java.io.Serializable
 import java.io.Writer
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.grammar.slot.KeywordGrammarSlot
-import org.jgll.grammar.slot.L0
-import org.jgll.grammar.slot.LastGrammarSlot
-import org.jgll.grammar.slot.NonterminalGrammarSlot
-import org.jgll.grammar.slot.TerminalGrammarSlot
+import org.jgll.grammar.slot._
 import org.jgll.util.logging.LoggerWrapper
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 
 import collection.mutable._
 import org.jgll.util.InputTrait
 
-//remove if not needed
-import scala.collection.JavaConversions._
 
+trait GrammarTrait {
+  self: InputTrait
+   with BodyGrammarSlotTrait
+   with KeywordGrammarSlotTrait
+   with GrammarBuilderTrait
+   with L0Trait
+   with NonterminalGrammarSlotTrait
+   with GrammarVisitorTrait
+   with GrammarVisitActionTrait
+   with HeadGrammarSlotTrait
+   with TerminalGrammarSlotTrait
+   with LastGrammarSlotTrait =>
 
-trait GrammarTrait extends InputTrait {
   object Grammar {
 
     private val log = LoggerWrapper.getLogger(classOf[Grammar])
@@ -62,7 +65,7 @@ trait GrammarTrait extends InputTrait {
     var stDevDescriptors: Int = builder.stDevDescriptors.toInt
 
     for (newNonterminals <- builder.newNonterminalsMap.values) {
-      this.newNonterminals.addAll(newNonterminals)
+      this.newNonterminals ++= (newNonterminals)
     }
 
     for (slot <- slots) {
@@ -99,8 +102,8 @@ trait GrammarTrait extends InputTrait {
       var header = Input.read(this.getClass.getResourceAsStream("ParserTemplate"))
       header = header.replace("${className}", name).replace("${packageName}", packageName)
       writer.append(header)
-      writer.append("case " + L0.getInstance.getId + ":\n")
-      L0.getInstance.codeParser(writer)
+      writer.append("case " + L0.getId + ":\n")
+      L0.codeParser(writer)
       for (nonterminal <- nonterminals) {
         writer.append("// " + nonterminal + "\n")
         writer.append("case " + nonterminal.getId + ":\n")
@@ -120,9 +123,9 @@ trait GrammarTrait extends InputTrait {
       writer.append("}")
     }
 
-    def getNonterminal(id: Int): HeadGrammarSlot = nonterminals.get(id)
+    def getNonterminal(id: Int): HeadGrammarSlot = nonterminals(id)
 
-    def getGrammarSlot(id: Int): BodyGrammarSlot = slots.get(id)
+    def getGrammarSlot(id: Int): BodyGrammarSlot = slots(id)
 
     def getGrammarSlots(): ListBuffer[BodyGrammarSlot] = slots
 

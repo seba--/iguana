@@ -1,18 +1,16 @@
 package org.jgll.parser
 
 import java.io.PrintStream
-import java.util.ArrayDeque
-import java.util.Deque
-import java.util.HashSet
-import java.util.Set
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.GrammarSlot
+import org.jgll.grammar.slot.{BodyGrammarSlotTrait, GrammarSlotTrait}
 import org.jgll.util.InputTrait
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
+import scala.collection.mutable
 
-trait ParseErrorTrait extends InputTrait {
+trait ParseErrorTrait {
+  self: InputTrait
+   with GrammarSlotTrait
+   with GSSNodeTrait
+   with BodyGrammarSlotTrait =>
 
   def getMessage(input: Input, inputIndex: Int): String = {
     val lineNumber = input.getLineNumber(inputIndex)
@@ -51,34 +49,34 @@ trait ParseErrorTrait extends InputTrait {
 
     private def findMergePoint(node: GSSNode, out: PrintStream, i: Int): GSSNode = {
       if (node.getCountEdges == 1) {
-        return node.getEdges.iterator().next().getDestination
+        return node.getEdges.iterator.next.getDestination
       }
       reachableFrom(node, out, i)
     }
 
     private def reachableFrom(node: GSSNode, out: PrintStream, _i: Int): GSSNode = {
       var i = _i
-      val set = new HashSet[GSSNode]()
-      val frontier = new ArrayDeque[GSSNode]()
+      val set = mutable.Set[GSSNode]()
+      val frontier = mutable.Queue[GSSNode]()
       for (edge <- node.getEdges) {
-        val destination = edge.getDestination
-        set.add(destination)
-        frontier.add(destination)
+        val destination: GSSNode = edge.getDestination
+        set += (destination)
+        frontier += (destination)
         indent(out, i + 1, destination)
       }
       i += 1
       while (frontier.size > 1) {
-        val f = frontier.poll().asInstanceOf[GSSNode]
+        val f = frontier.dequeue
         for (edge <- f.getEdges) {
-          val destination = edge.getDestination
+          val destination: GSSNode = edge.getDestination
           if (!set.contains(destination)) {
-            set.add(destination)
-            frontier.add(destination)
+            set += (destination)
+            frontier += (destination)
             indent(out, i + 1, destination)
           }
         }
       }
-      frontier.poll()
+      frontier.dequeue
     }
   }
 }

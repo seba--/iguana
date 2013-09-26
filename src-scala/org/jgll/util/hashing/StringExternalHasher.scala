@@ -1,10 +1,7 @@
 package org.jgll.util.hashing
 
 import org.jgll.util.hashing.hashfunction.HashFunction
-import StringExternalHasher._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
 
 object StringExternalHasher {
 

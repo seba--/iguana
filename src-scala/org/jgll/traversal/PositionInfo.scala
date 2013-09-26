@@ -3,9 +3,6 @@ package org.jgll.traversal
 import scala.reflect.{BeanProperty, BooleanBeanProperty}
 import scala.virtualization.lms.common.Structs
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 trait PositionInfoTrait extends Structs {
   type PositionInfo = Record {
     val start: Int

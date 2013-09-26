@@ -1,44 +1,51 @@
 package org.jgll.parser
 
-import org.jgll.grammar.Keyword
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.grammar.slot.LastGrammarSlot
-import org.jgll.lookup.LookupTable
-import org.jgll.sppf.NonPackedNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.lookup.LookupTableTrait
+import org.jgll.sppf._
+import org.jgll.grammar.slot.{HeadGrammarSlotTrait, LastGrammarSlotTrait, BodyGrammarSlotTrait, GrammarSlotTrait}
+import org.jgll.grammar.KeywordTrait
 
-trait GLLParserInternals {
+trait GLLParserInternalsTrait {
+  self: BodyGrammarSlotTrait
+   with KeywordTrait
+   with SPPFNodeTrait
+   with LastGrammarSlotTrait
+   with DescriptorTrait
+   with HeadGrammarSlotTrait
+   with TerminalSymbolNodeTrait
+   with NonPackedNodeTrait
+   with LookupTableTrait
+   with GrammarSlotTrait
+   with GSSNodeTrait =>
 
-  def pop(): Unit
+  trait GLLParserInternals {
 
-  def createGSSNode(slot: GrammarSlot): Unit
+    def pop(): Unit
 
-  def getTerminalNode(c: Int): TerminalSymbolNode
+    def createGSSNode(slot: GrammarSlot): Unit
 
-  def getEpsilonNode(): TerminalSymbolNode
+    def getTerminalNode(c: Int): TerminalSymbolNode
 
-  def getNonterminalNode(slot: LastGrammarSlot, rightChild: SPPFNode): SPPFNode
+    def getEpsilonNode(): TerminalSymbolNode
 
-  def getIntermediateNode(slot: BodyGrammarSlot, rightChild: SPPFNode): SPPFNode
+    def getNonterminalNode(slot: LastGrammarSlot, rightChild: SPPFNode): SPPFNode
 
-  def addDescriptor(label: GrammarSlot): Unit
+    def getIntermediateNode(slot: BodyGrammarSlot, rightChild: SPPFNode): SPPFNode
 
-  def getKeywordStub(keyword: Keyword, slot: HeadGrammarSlot, ci: Int): NonPackedNode
+    def addDescriptor(label: GrammarSlot): Unit
 
-  def hasNextDescriptor(): Boolean
+    def getKeywordStub(keyword: Keyword, slot: HeadGrammarSlot, ci: Int): NonPackedNode
 
-  def nextDescriptor(): Descriptor
+    def hasNextDescriptor(): Boolean
 
-  def getCurrentInputIndex(): Int
+    def nextDescriptor(): Descriptor
 
-  def getCurrentGSSNode(): GSSNode
+    def getCurrentInputIndex(): Int
 
-  def recordParseError(slot: GrammarSlot): Unit
+    def getCurrentGSSNode(): GSSNode
 
-  def getLookupTable(): LookupTable
+    def recordParseError(slot: GrammarSlot): Unit
+
+    def getLookupTable(): LookupTable
+  }
 }

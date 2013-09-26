@@ -4,96 +4,101 @@ import org.jgll.util.dot.GraphVizUtil.EDGE
 import org.jgll.util.dot.GraphVizUtil.INTERMEDIATE_NODE
 import org.jgll.util.dot.GraphVizUtil.PACKED_NODE
 import org.jgll.util.dot.GraphVizUtil.SYMBOL_NODE
-import org.jgll.sppf.IntermediateNode
-import org.jgll.sppf.ListSymbolNode
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.PackedNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
-import org.jgll.traversal.SPPFVisitorUtil
-import org.jgll.traversal.SPPFVisitor
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.sppf._
+import org.jgll.traversal.{SPPFVisitorUtilTrait, SPPFVisitorTrait}
 
-class SPPFToDot(private val showPackedNodeLabel: Boolean) extends ToDot with SPPFVisitor {
+trait SPPFToDotTrait {
+  self: ToDotTrait
+   with SPPFVisitorTrait
+   with TerminalSymbolNodeTrait
+   with NonterminalSymbolNodeTrait
+   with IntermediateNodeTrait
+   with PackedNodeTrait
+   with SPPFNodeTrait
+   with ListSymbolNodeTrait
+   with SPPFVisitorUtilTrait =>
 
-  protected var sb: StringBuilder = new StringBuilder()
 
-  def this() {
-    this(false)
-  }
+  class SPPFToDot(private val showPackedNodeLabel: Boolean) extends ToDot with SPPFVisitor {
 
-  override def visit(node: TerminalSymbolNode) {
-    if (!node.isVisited) {
-      node.setVisited(true)
-      val label = node.getLabel
-      label.replace("ε", "&epsilon;")
-      sb.append("\"" + getId(node) + "\"" + 
-        String.format(SYMBOL_NODE, replaceWhiteSpace(label)) + 
-        "\n")
+    protected var sb: StringBuilder = new StringBuilder()
+
+    def this() {
+      this(false)
     }
-  }
 
-  override def visit(node: NonterminalSymbolNode) {
-    if (!node.isVisited) {
-      node.setVisited(true)
-      sb.append("\"" + getId(node) + "\"" + 
-        String.format(SYMBOL_NODE, replaceWhiteSpace(node.getLabel)) + 
-        "\n")
-      addEdgesToChildren(node)
-      SPPFVisitorUtil.visitChildren(node, this)
-    }
-  }
-
-  override def visit(node: IntermediateNode) {
-    if (!node.isVisited) {
-      node.setVisited(true)
-      sb.append("\"" + getId(node) + "\"" + 
-        String.format(INTERMEDIATE_NODE, replaceWhiteSpace(node.toString)) + 
-        "\n")
-      addEdgesToChildren(node)
-      SPPFVisitorUtil.visitChildren(node, this)
-    }
-  }
-
-  override def visit(node: PackedNode) {
-    if (!node.isVisited) {
-      node.setVisited(true)
-      if (showPackedNodeLabel) {
-        sb.append("\"" + getId(node) + "\"" + 
-          String.format(PACKED_NODE, replaceWhiteSpace(node.toString)) + 
-          "\n")
-      } else {
-        sb.append("\"" + getId(node) + "\"" + String.format(PACKED_NODE, "") + 
+    override def visit(node: TerminalSymbolNode) {
+      if (!node.isVisited) {
+        node.setVisited(true)
+        val label = node.getLabel
+        label.replace("ε", "&epsilon;")
+        sb.append("\"" + getId(node) + "\"" +
+          String.format(SYMBOL_NODE, replaceWhiteSpace(label)) +
           "\n")
       }
-      addEdgesToChildren(node)
-      SPPFVisitorUtil.visitChildren(node, this)
     }
-  }
 
-  protected def addEdgesToChildren(node: SPPFNode) {
-    for (child <- node.getChildren) {
-      addEdgeToChild(node, child)
+    override def visit(node: NonterminalSymbolNode) {
+      if (!node.isVisited) {
+        node.setVisited(true)
+        sb.append("\"" + getId(node) + "\"" +
+          String.format(SYMBOL_NODE, replaceWhiteSpace(node.getLabel)) +
+          "\n")
+        addEdgesToChildren(node)
+        SPPFVisitorUtil.visitChildren(node, this)
+      }
     }
-  }
 
-  protected def addEdgeToChild(parentNode: SPPFNode, childNode: SPPFNode) {
-    sb.append(EDGE + "\"" + getId(parentNode) + "\"" + "->" + "{\"" + 
-      getId(childNode) + 
-      "\"}" + 
-      "\n")
-  }
+    override def visit(node: IntermediateNode) {
+      if (!node.isVisited) {
+        node.setVisited(true)
+        sb.append("\"" + getId(node) + "\"" +
+          String.format(INTERMEDIATE_NODE, replaceWhiteSpace(node.toString)) +
+          "\n")
+        addEdgesToChildren(node)
+        SPPFVisitorUtil.visitChildren(node, this)
+      }
+    }
 
-  protected def replaceWhiteSpace(s: String): String = {
-    s.replace("\\", "\\\\").replace("\t", "\\\\t").replace("\n", "\\\\n")
-      .replace("\r", "\\\\r")
-      .replace("\"", "\\\"")
-  }
+    override def visit(node: PackedNode) {
+      if (!node.isVisited) {
+        node.setVisited(true)
+        if (showPackedNodeLabel) {
+          sb.append("\"" + getId(node) + "\"" +
+            String.format(PACKED_NODE, replaceWhiteSpace(node.toString)) +
+            "\n")
+        } else {
+          sb.append("\"" + getId(node) + "\"" + String.format(PACKED_NODE, "") +
+            "\n")
+        }
+        addEdgesToChildren(node)
+        SPPFVisitorUtil.visitChildren(node, this)
+      }
+    }
 
-  override def visit(node: ListSymbolNode) {
-    visit(node.asInstanceOf[NonterminalSymbolNode])
-  }
+    protected def addEdgesToChildren(node: SPPFNode) {
+      for (child <- node.getChildren) {
+        addEdgeToChild(node, child)
+      }
+    }
 
-  def getString(): String = sb.toString
+    protected def addEdgeToChild(parentNode: SPPFNode, childNode: SPPFNode) {
+      sb.append(EDGE + "\"" + getId(parentNode) + "\"" + "->" + "{\"" +
+        getId(childNode) +
+        "\"}" +
+        "\n")
+    }
+
+    protected def replaceWhiteSpace(s: String): String = {
+      s.replace("\\", "\\\\").replace("\t", "\\\\t").replace("\n", "\\\\n")
+        .replace("\r", "\\\\r")
+        .replace("\"", "\\\"")
+    }
+
+    override def visit(node: ListSymbolNode) {
+      visit(node.asInstanceOf[NonterminalSymbolNode])
+    }
+
+    def getString(): String = sb.toString
+  }
 }

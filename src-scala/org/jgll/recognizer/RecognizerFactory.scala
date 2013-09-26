@@ -1,27 +1,29 @@
 package org.jgll.recognizer
 
-//remove if not needed
-import scala.collection.JavaConversions._
+trait RecognizerFactoryTrait {
+  self: GLLRecognizerTrait
+   with InterpretedGLLRecognizerTrait
+   with PrefixGLLRecognizerTrait =>
+  object RecognizerFactory {
 
-object RecognizerFactory {
+    private var _contextFreeRecognizer: GLLRecognizer = _
 
-  private var _contextFreeRecognizer: GLLRecognizer = _
+    private var prefixRecognizer: GLLRecognizer = _
 
-  private var prefixRecognizer: GLLRecognizer = _
-
-  def contextFreeRecognizer(): GLLRecognizer = {
-    if (_contextFreeRecognizer == null) {
-      _contextFreeRecognizer = new InterpretedGLLRecognizer()
-      return _contextFreeRecognizer
+    def contextFreeRecognizer(): GLLRecognizer = {
+      if (_contextFreeRecognizer == null) {
+        _contextFreeRecognizer = new InterpretedGLLRecognizer()
+        return _contextFreeRecognizer
+      }
+      _contextFreeRecognizer
     }
-    _contextFreeRecognizer
-  }
 
-  def prefixContextFreeRecognizer(): GLLRecognizer = {
-    if (prefixRecognizer == null) {
-      prefixRecognizer = new PrefixGLLRecognizer()
-      return prefixRecognizer
+    def prefixContextFreeRecognizer(): GLLRecognizer = {
+      if (prefixRecognizer == null) {
+        prefixRecognizer = new PrefixGLLRecognizer()
+        return prefixRecognizer
+      }
+      prefixRecognizer
     }
-    prefixRecognizer
   }
 }

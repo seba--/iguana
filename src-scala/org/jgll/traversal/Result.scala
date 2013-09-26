@@ -1,9 +1,6 @@
 package org.jgll.traversal
 
-import Result._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
 
 object Result {
 

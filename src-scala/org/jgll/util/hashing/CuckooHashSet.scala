@@ -1,14 +1,12 @@
 package org.jgll.util.hashing
 
 import java.io.Serializable
-import java.util.Iterator
 import org.jgll.util.RandomUtil
 import org.jgll.util.hashing.hashfunction.HashFunction
 import org.jgll.util.hashing.hashfunction.MurmurHash3
 import CuckooHashSet._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
+
 
 object CuckooHashSet {
 
@@ -29,7 +27,7 @@ object CuckooHashSet {
 @SerialVersionUID(1L)
 class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private var loadFactor: Float, decomposer: ExternalHasher[T])
                               (implicit val manifest: Manifest[T])
-    extends Serializable with java.lang.Iterable[T] {
+    extends Serializable with collection.mutable.Set[T] {
 
   if (initialCapacity < 8) {
     initialCapacity = 8
@@ -71,8 +69,8 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
   }
 
   private def generateNewHashFunctions() {
-    function1 = new MurmurHash3(RandomUtil.random.nextInt(java.lang.Integer.MAX_VALUE))
-    function2 = new MurmurHash3(RandomUtil.random.nextInt(java.lang.Integer.MAX_VALUE))
+    function1 = new MurmurHash3(RandomUtil.random.nextInt(Int.MaxValue))
+    function2 = new MurmurHash3(RandomUtil.random.nextInt(Int.MaxValue))
   }
 
   def contains(key: T): Boolean = get(key) != null
@@ -286,7 +284,7 @@ class CuckooHashSet[T >: Null](@BeanProperty var initialCapacity: Int, private v
     enlargeCount = 0
   }
 
-  def addAll(c: java.lang.Iterable[T]): Boolean = {
+  def addAll(c: Iterable[T]): Boolean = {
     var changed = false
     for (e <- c) {
       changed |= (add(e) == null)

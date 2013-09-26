@@ -1,8 +1,5 @@
 package org.jgll.util
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 class SparseBitSet {
 
   private var wordsMap: collection.mutable.Map[Long, Long] = collection.mutable.Map()

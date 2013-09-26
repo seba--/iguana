@@ -1,16 +1,18 @@
 package org.jgll.grammar
 
-//remove if not needed
-import scala.collection.JavaConversions._
+trait TerminalFactoryTrait {
+  self: TerminalTrait
+   with CharacterTrait
+   with RangeTrait =>
+  object TerminalFactory {
 
-object TerminalFactory {
+    def from(c: Int): Terminal = new Character(c)
 
-  def from(c: Int): Terminal = new Character(c)
-
-  def get(start: Int, end: Int): Terminal = {
-    if (start == end) {
-      return new Character(start)
+    def get(start: Int, end: Int): Terminal = {
+      if (start == end) {
+        return new Character(start)
+      }
+      new Range(start, end)
     }
-    new Range(start, end)
   }
 }

@@ -1,8 +1,5 @@
 package org.jgll.util.hashing
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 @SerialVersionUID(1L)
 class LevelSet[T >: Null <: Level](decomposer: ExternalHasher[T], initalCapacity: Int = CuckooHashSet.DEFAULT_INITIAL_CAPACITY)
                           (implicit val m: Manifest[T])

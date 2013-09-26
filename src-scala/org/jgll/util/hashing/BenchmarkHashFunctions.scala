@@ -1,11 +1,8 @@
 package org.jgll.util.hashing
 
-import java.util.ArrayList
-import java.util.List
 import java.util.Random
 import org.jgll.util.hashing.hashfunction.HashFunction
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.collection.mutable.ListBuffer
 
 class BenchmarkHashFunctions(private val targets: HashFunction*) {
 
@@ -20,7 +17,7 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
     println("Warmed up: " + r)
     for (f <- this.targets) {
       println(f.getClass.getName)
-      var measurements = new ArrayList[Long]()
+      var measurements = ListBuffer[Long]()
       for (it <- 0 until iterations) {
         val start = System.nanoTime()
         r = 0
@@ -29,10 +26,10 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
           r += f.hash(d(0), d(1), d(2))
         }
         val stop = System.nanoTime()
-        measurements.add((stop - start) / (1000 * 1000))
+        measurements += ((stop - start) / (1000 * 1000))
       }
       printAvgStdDev("\t 3 numbers", measurements)
-      measurements = new ArrayList()
+      measurements = ListBuffer()
       for (it <- 0 until iterations) {
         val start = System.nanoTime()
         r = 0
@@ -41,10 +38,10 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
           r += f.hash(d(0), d(1), d(2), d(3))
         }
         val stop = System.nanoTime()
-        measurements.add((stop - start) / (1000 * 1000))
+        measurements += ((stop - start) / (1000 * 1000))
       }
       printAvgStdDev("\t 4 numbers", measurements)
-      measurements = new ArrayList()
+      measurements = ListBuffer()
       for (it <- 0 until iterations) {
         val start = System.nanoTime()
         r = 0
@@ -53,13 +50,13 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
           r += f.hash(d(0), d(1), d(2), d(3), d(4))
         }
         val stop = System.nanoTime()
-        measurements.add((stop - start) / (1000 * 1000))
+        measurements += ((stop - start) / (1000 * 1000))
       }
       printAvgStdDev("\t 5 numbers", measurements)
     }
   }
 
-  private def printAvgStdDev(name: String, measurements: List[Long]) {
+  private def printAvgStdDev(name: String, measurements: ListBuffer[Long]) {
     var sum = 0l
     for (l <- measurements) {
       sum += l
@@ -115,7 +112,7 @@ class BenchmarkHashFunctions(private val targets: HashFunction*) {
       result(i)(1) = if (r.nextInt(5) <= 3) r.nextInt(0xFFF) else r.nextInt(0xFFFF)
       result(i)(2) = if (r.nextBoolean()) r.nextInt(0xFFFF) else r.nextInt(0x1FFFF)
       result(i)(3) = if (r.nextBoolean()) r.nextInt(0xFFF) else r.nextInt(0x3FFFF)
-      result(i)(4) = r.nextInt(java.lang.Integer.MAX_VALUE)
+      result(i)(4) = r.nextInt(Int.MaxValue)
     }
     result
   }

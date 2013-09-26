@@ -1,8 +1,5 @@
 package org.jgll.grammar.condition
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 object ConditionType extends Enumeration {
   type ConditionType = Value
 

@@ -1,8 +1,5 @@
 package org.jgll.util.hashing.hashfunction
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 class SuperFastHash extends HashFunction {
 
   private var seed = 5

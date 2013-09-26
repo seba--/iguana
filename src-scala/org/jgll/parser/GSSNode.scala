@@ -1,74 +1,76 @@
 package org.jgll.parser
 
-import java.util.ArrayList
-import java.util.List
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.L0
+import org.jgll.grammar.slot.{L0Trait, GrammarSlotTrait}
 import org.jgll.util.hashing.ExternalHasher
 import org.jgll.util.hashing.Level
 import org.jgll.util.hashing.hashfunction.HashFunction
-import GSSNode._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.reflect.BeanProperty
+import scala.collection.mutable.ListBuffer
 
-object GSSNode {
+trait GSSNodeTrait {
+  self: GrammarSlotTrait
+   with L0Trait
+   with GSSEdgeTrait =>
 
-  val externalHasher = new GSSNodeExternalHasher()
+  import GSSNode._
+  object GSSNode {
 
-  val levelBasedExternalHasher = new LevelBasedGSSNodeExternalHasher()
+    val externalHasher = new GSSNodeExternalHasher()
 
-  val U0 = new GSSNode(L0.getInstance, 0)
+    val levelBasedExternalHasher = new LevelBasedGSSNodeExternalHasher()
 
-  @SerialVersionUID(1L)
-  class GSSNodeExternalHasher extends ExternalHasher[GSSNode] {
+    val U0 = new GSSNode(L0, 0)
 
-    override def hash(node: GSSNode, f: HashFunction): Int = {
-      f.hash(node.slot.getId, node.inputIndex)
+    @SerialVersionUID(1L)
+    class GSSNodeExternalHasher extends ExternalHasher[GSSNode] {
+
+      override def hash(node: GSSNode, f: HashFunction): Int = {
+        f.hash(node.slot.getId, node.inputIndex)
+      }
+
+      override def equals(g1: GSSNode, g2: GSSNode): Boolean = {
+        g1.slot.getId == g2.slot.getId && g1.inputIndex == g2.inputIndex
+      }
     }
 
-    override def equals(g1: GSSNode, g2: GSSNode): Boolean = {
-      g1.slot.getId == g2.slot.getId && g1.inputIndex == g2.inputIndex
+    @SerialVersionUID(1L)
+    class LevelBasedGSSNodeExternalHasher extends ExternalHasher[GSSNode] {
+
+      override def hash(node: GSSNode, f: HashFunction): Int = f.hash(node.slot.getId)
+
+      override def equals(g1: GSSNode, g2: GSSNode): Boolean = g1.slot == g2.slot
     }
   }
 
-  @SerialVersionUID(1L)
-  class LevelBasedGSSNodeExternalHasher extends ExternalHasher[GSSNode] {
+  class GSSNode(private val slot: GrammarSlot, @BeanProperty val inputIndex: Int)
+      extends Level {
 
-    override def hash(node: GSSNode, f: HashFunction): Int = f.hash(node.slot.getId)
+    private var gssEdges: ListBuffer[GSSEdge] = ListBuffer()
 
-    override def equals(g1: GSSNode, g2: GSSNode): Boolean = g1.slot == g2.slot
-  }
-}
-
-class GSSNode(private val slot: GrammarSlot, @BeanProperty val inputIndex: Int)
-    extends Level {
-
-  private var gssEdges: List[GSSEdge] = new ArrayList()
-
-  def addGSSEdge(edge: GSSEdge) {
-    gssEdges.add(edge)
-  }
-
-  def getEdges(): java.lang.Iterable[GSSEdge] = gssEdges
-
-  def getCountEdges(): Int = gssEdges.size
-
-  def getGrammarSlot(): GrammarSlot = slot
-
-  override def equals(obj: Any): Boolean = {
-    if (!(obj.isInstanceOf[GSSNode])) {
-      return false
+    def addGSSEdge(edge: GSSEdge) {
+      gssEdges += (edge)
     }
-    val other = obj.asInstanceOf[GSSNode]
-    slot == other.slot && inputIndex == other.inputIndex
+
+    def getEdges(): ListBuffer[GSSEdge] = gssEdges
+
+    def getCountEdges(): Int = gssEdges.size
+
+    def getGrammarSlot(): GrammarSlot = slot
+
+    override def equals(obj: Any): Boolean = {
+      if (!(obj.isInstanceOf[GSSNode])) {
+        return false
+      }
+      val other = obj.asInstanceOf[GSSNode]
+      slot == other.slot && inputIndex == other.inputIndex
+    }
+
+    override def hashCode(): Int = {
+      externalHasher.hash(this, HashFunctions.defaulFunction())
+    }
+
+    override def toString(): String = "(" + slot + "," + inputIndex + ")"
+
+    override def getLevel(): Int = inputIndex
   }
-
-  override def hashCode(): Int = {
-    externalHasher.hash(this, HashFunctions.defaulFunction())
-  }
-
-  override def toString(): String = "(" + slot + "," + inputIndex + ")"
-
-  override def getLevel(): Int = inputIndex
 }

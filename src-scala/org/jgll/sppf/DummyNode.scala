@@ -1,44 +1,40 @@
 package org.jgll.sppf
 
-import java.util.Collections
-import org.jgll.grammar.slot.GrammarSlot
-import org.jgll.grammar.slot.L0
-import org.jgll.traversal.SPPFVisitor
-import DummyNode._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.grammar.slot.{L0Trait, GrammarSlotTrait}
+import org.jgll.traversal.SPPFVisitorTrait
+import scala.reflect.BeanProperty
+import scala.collection.mutable.ListBuffer
 
-object DummyNode {
+trait DummyNodeTrait {
+  self: SPPFNodeTrait
+   with SPPFVisitorTrait
+   with GrammarSlotTrait
+   with L0Trait =>
+  object DummyNode extends SPPFNode {
 
-  @BeanProperty
-  lazy val instance = new DummyNode()
-}
+    override def equals(obj: Any): Boolean = obj.isInstanceOf[DummyNode.type]
 
-class DummyNode private () extends SPPFNode {
+    override def getLabel(): String = "$"
 
-  override def equals(obj: Any): Boolean = obj.isInstanceOf[DummyNode]
+    override def getLeftExtent(): Int = -1
 
-  override def getLabel(): String = "$"
+    override def getRightExtent(): Int = -1
 
-  override def getLeftExtent(): Int = -1
+    override def getChildAt(index: Int): SPPFNode = null
 
-  override def getRightExtent(): Int = -1
+    override def childrenCount(): Int = 0
 
-  override def getChildAt(index: Int): SPPFNode = null
+    override def getChildren(): Iterable[SPPFNode] = ListBuffer()
 
-  override def childrenCount(): Int = 0
+    override def toString(): String = "$"
 
-  override def getChildren(): java.lang.Iterable[SPPFNode] = Collections.emptyList()
+    override def isAmbiguous(): Boolean = false
 
-  override def toString(): String = "$"
+    override def accept(visitAction: SPPFVisitor) {
+    }
 
-  override def isAmbiguous(): Boolean = false
+    override def getGrammarSlot(): GrammarSlot = L0
 
-  override def accept(visitAction: SPPFVisitor) {
+    override def getLevel(): Int = 0
   }
-
-  override def getGrammarSlot(): GrammarSlot = L0.getInstance
-
-  override def getLevel(): Int = 0
 }

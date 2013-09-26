@@ -2,8 +2,6 @@ package org.jgll.util.hashing
 
 import java.io.Serializable
 import org.jgll.util.hashing.hashfunction.HashFunction
-//remove if not needed
-import scala.collection.JavaConversions._
 
 trait ExternalHasher[T] extends Serializable {
 

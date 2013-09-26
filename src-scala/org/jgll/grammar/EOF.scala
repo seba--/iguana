@@ -1,12 +1,9 @@
 package org.jgll.grammar
 
-import EOF._
-import scala.reflect.{BeanProperty, BooleanBeanProperty}
-//remove if not needed
-import scala.collection.JavaConversions._
+trait EOFTrait { self: CharacterTrait =>
+  @SerialVersionUID(1L)
+  object EOF  extends Character(0) {
 
-@SerialVersionUID(1L)
-object EOF  extends Character(0) {
-
-  override def toString(): String = "$"
+    override def toString(): String = "$"
+  }
 }

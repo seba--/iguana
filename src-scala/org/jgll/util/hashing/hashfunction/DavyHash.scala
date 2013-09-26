@@ -1,8 +1,5 @@
 package org.jgll.util.hashing.hashfunction
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 class DavyHash(private var seed: Int) extends HashFunction {
 
   private val m = 0x5bd1e995

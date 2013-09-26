@@ -1,8 +1,10 @@
 package org.jgll.sppf
 
-import org.jgll.grammar.slot.GrammarSlot
-//remove if not needed
-import scala.collection.JavaConversions._
+import org.jgll.grammar.slot.GrammarSlotTrait
 
-class CollapsibleNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Int) extends NonterminalSymbolNode(slot, 
-  leftExtent, rightExtent)
+trait CollapsibleNodeTrait {
+  self: GrammarSlotTrait
+   with NonterminalSymbolNodeTrait =>
+  class CollapsibleNode(slot: GrammarSlot, leftExtent: Int, rightExtent: Rep[Int])
+    extends NonterminalSymbolNode(slot, leftExtent, rightExtent)
+}

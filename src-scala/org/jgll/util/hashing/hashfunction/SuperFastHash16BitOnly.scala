@@ -1,8 +1,5 @@
 package org.jgll.util.hashing.hashfunction
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 class SuperFastHash16BitOnly(private val seed: Int = 5) extends HashFunction {
 
   override def hash(k: Int): Int = 0

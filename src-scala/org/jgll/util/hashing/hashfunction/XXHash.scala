@@ -1,8 +1,6 @@
 package org.jgll.util.hashing.hashfunction
 
 import XXHash._
-//remove if not needed
-import scala.collection.JavaConversions._
 
 object XXHash {
 

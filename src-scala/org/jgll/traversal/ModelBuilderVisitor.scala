@@ -1,27 +1,29 @@
 package org.jgll.traversal
 
-import java.util.ArrayList
-import java.util.Iterator
-import java.util.List
-import org.jgll.grammar.Character
-import org.jgll.grammar.CharacterClass
-import org.jgll.grammar.slot.BodyGrammarSlot
-import org.jgll.grammar.slot.HeadGrammarSlot
-import org.jgll.grammar.slot.LastGrammarSlot
-import org.jgll.grammar.slot.TerminalGrammarSlot
-import org.jgll.sppf.IntermediateNode
-import org.jgll.sppf.ListSymbolNode
-import org.jgll.sppf.NonterminalSymbolNode
-import org.jgll.sppf.PackedNode
-import org.jgll.sppf.SPPFNode
-import org.jgll.sppf.TerminalSymbolNode
-import org.jgll.traversal.SPPFVisitorUtil._
+import org.jgll.grammar.CharacterClassTrait
+import org.jgll.grammar.slot._
+import org.jgll.sppf._
 import org.jgll.util.InputTrait
+import scala.collection.mutable.ListBuffer
 
-//remove if not needed
-import scala.collection.JavaConversions._
+trait ModelBuilderVisitorTrait {
+  self: InputTrait
+   with SPPFVisitorTrait
+   with TerminalSymbolNodeTrait
+   with NonterminalSymbolNodeTrait
+   with HeadGrammarSlotTrait
+   with LastGrammarSlotTrait
+   with CharacterClassTrait
+   with TerminalGrammarSlotTrait
+   with PackedNodeTrait
+   with SPPFNodeTrait
+   with ListSymbolNodeTrait
+   with IntermediateNodeTrait
+   with SPPFVisitorUtilTrait
+  =>
 
-trait ModelBuilderVisitorTrait extends InputTrait {
+  import SPPFVisitorUtil._
+
   class ModelBuilderVisitor[T, U](private var input: Input, private var listener: NodeListener[T, U])
       extends SPPFVisitor {
 
@@ -31,8 +33,7 @@ trait ModelBuilderVisitorTrait extends InputTrait {
         if (terminal.getMatchedChar == TerminalSymbolNode.EPSILON) {
           terminal.setObj(Result.skip())
         } else {
-          val result = listener.terminal(terminal.getMatchedChar, input.getPositionInfo(terminal.getLeftExtent,
-            terminal.getRightExtent))
+          val result = listener.terminal(terminal.getMatchedChar, input.getPositionInfo(terminal.getLeftExtent, terminal.getRightExtent))
           terminal.setObj(result)
         }
       }
@@ -47,27 +48,24 @@ trait ModelBuilderVisitorTrait extends InputTrait {
         } else if (nonterminalSymbolNode.isKeywordNode) {
           val head = nonterminalSymbolNode.getGrammarSlot.asInstanceOf[HeadGrammarSlot]
           var currentSlot = head.getAlternateAt(0).getFirstSlot
-          val list = new ArrayList[U]()
+          val list = ListBuffer[U]()
           val i = nonterminalSymbolNode.getLeftExtent
           while (!(currentSlot.isInstanceOf[LastGrammarSlot])) {
             val terminal: CharacterClass = currentSlot.asInstanceOf[TerminalGrammarSlot].getTerminal.asInstanceOf[CharacterClass]
             assert(terminal.ranges.size == 1)
-            val result = listener.terminal(terminal.ranges.get(0).getStart, input.getPositionInfo(i,
-              i))
-            list.add(result.getObj)
+            val result = listener.terminal(terminal.ranges(0).getStart, input.getPositionInfo(i, i))
+            list += (result.getObj)
             currentSlot = currentSlot.next()
           }
           val slot = nonterminalSymbolNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
           listener.startNode(slot.getObj.asInstanceOf[T])
-          val result = listener.endNode(slot.getObj.asInstanceOf[T], list, input.getPositionInfo(nonterminalSymbolNode.getLeftExtent,
-            nonterminalSymbolNode.getRightExtent))
+          val result = listener.endNode(slot.getObj.asInstanceOf[T], list, input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, nonterminalSymbolNode.getRightExtent))
           nonterminalSymbolNode.setObj(result)
         } else {
           val slot = nonterminalSymbolNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
           listener.startNode(slot.getObj.asInstanceOf[T])
           visitChildren(nonterminalSymbolNode, this)
-          val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(nonterminalSymbolNode),
-            input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, nonterminalSymbolNode.getRightExtent))
+          val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(nonterminalSymbolNode), input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, nonterminalSymbolNode.getRightExtent))
           nonterminalSymbolNode.setObj(result)
         }
       }
@@ -80,16 +78,14 @@ trait ModelBuilderVisitorTrait extends InputTrait {
         val slot = packedNode.getGrammarSlot.asInstanceOf[LastGrammarSlot]
         listener.startNode(slot.getObj.asInstanceOf[T])
         packedNode.accept(this)
-        val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(packedNode), input.getPositionInfo(packedNode.getLeftExtent,
-          packedNode.getRightExtent))
+        val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(packedNode), input.getPositionInfo(packedNode.getLeftExtent, packedNode.getRightExtent))
         packedNode.setObj(result)
         if (result != Result.filter()) {
           nPackedNodes += 1
         }
       }
       if (nPackedNodes > 1) {
-        val result = listener.buildAmbiguityNode(getChildrenValues(nonterminalSymbolNode), input.getPositionInfo(nonterminalSymbolNode.getLeftExtent,
-          nonterminalSymbolNode.getRightExtent))
+        val result = listener.buildAmbiguityNode(getChildrenValues(nonterminalSymbolNode), input.getPositionInfo(nonterminalSymbolNode.getLeftExtent, nonterminalSymbolNode.getRightExtent))
         nonterminalSymbolNode.setObj(result)
       }
     }
@@ -117,16 +113,15 @@ trait ModelBuilderVisitorTrait extends InputTrait {
           val slot = listNode.getFirstPackedNodeGrammarSlot.asInstanceOf[LastGrammarSlot]
           listener.startNode(slot.getObj.asInstanceOf[T])
           visitChildren(listNode, this)
-          val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(listNode), input.getPositionInfo(listNode.getLeftExtent,
-            listNode.getRightExtent))
+          val result = listener.endNode(slot.getObj.asInstanceOf[T], getChildrenValues(listNode), input.getPositionInfo(listNode.getLeftExtent, listNode.getRightExtent))
           listNode.setObj(result)
         }
       }
     }
 
-    private def getChildrenValues(node: SPPFNode): java.lang.Iterable[U] = {
-      val _iterator = node.getChildren.iterator()
-      new java.lang.Iterable[U]() {
+    private def getChildrenValues(node: SPPFNode): Iterable[U] = {
+      val _iterator = node.getChildren.iterator
+      new Iterable[U]() {
 
         override def iterator(): Iterator[U] = {
           new Iterator[U]() {
@@ -161,10 +156,6 @@ trait ModelBuilderVisitorTrait extends InputTrait {
 
             override def next(): U = {
               _next.getObj.asInstanceOf[Result[U]].getObj
-            }
-
-            override def remove() {
-              throw new UnsupportedOperationException()
             }
           }
         }

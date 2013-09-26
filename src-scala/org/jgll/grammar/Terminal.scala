@@ -1,14 +1,16 @@
 package org.jgll.grammar
 
 import java.util.BitSet
-//remove if not needed
-import scala.collection.JavaConversions._
+import scala.virtualization.lms.common.Base
 
-trait Terminal extends Symbol {
+trait TerminalTrait {
+  self: Base =>
+  trait Terminal extends Symbol {
 
-  def `match`(i: Int): Boolean
+    def `match`(i: Rep[Int]): Boolean
 
-  def getMatchCode(): String
+    def getMatchCode(): String
 
-  def asBitSet(): BitSet
+    def asBitSet(): BitSet
+  }
 }

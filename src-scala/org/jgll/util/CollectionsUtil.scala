@@ -2,9 +2,6 @@ package org.jgll.util
 
 import scala.collection.mutable._
 
-//remove if not needed
-import scala.collection.JavaConversions._
-
 object CollectionsUtil {
 
   def listToString[T](elements: Seq[T]): String = {

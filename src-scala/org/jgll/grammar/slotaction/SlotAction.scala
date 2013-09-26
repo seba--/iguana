@@ -1,12 +1,13 @@
 package org.jgll.grammar.slotaction
 
 import java.io.Serializable
-import org.jgll.parser.GLLParserInternals
-import org.jgll.util.{InputTrait, Input}
+import org.jgll.parser.GLLParserInternalsTrait
+import org.jgll.util.InputTrait
 //remove if not needed
-import scala.collection.JavaConversions._
 
-trait SlotAction[T] extends InputTrait with Serializable {
+trait SlotActionTrait { self: InputTrait with GLLParserInternalsTrait =>
+  trait SlotAction[T] extends Serializable {
 
-  def execute(parser: GLLParserInternals, input: Input): T
+    def execute(parser: GLLParserInternals, input: Input): T
+  }
 }
